@@ -1,0 +1,287 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  min-height: 100vh;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #a78bfa 0%, #8b5cf6 100%);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+/* Pastel Mor Renk Paleti */
+:root {
+  --purple-50: #faf7ff;
+  --purple-100: #f3e8ff;
+  --purple-200: #e9d5ff;
+  --purple-300: #d8b4fe;
+  --purple-400: #c084fc;
+  --purple-500: #a855f7;
+  --purple-600: #9333ea;
+  --purple-700: #7c3aed;
+  --purple-800: #6b21a8;
+  --purple-900: #581c87;
+  
+  --lavender-50: #fdfcff;
+  --lavender-100: #f8f4ff;
+  --lavender-200: #f1e7ff;
+  --lavender-300: #e6d3ff;
+  --lavender-400: #d4b5ff;
+  --lavender-500: #c084fc;
+  --lavender-600: #a855f7;
+  
+  --periwinkle-50: #f0f0ff;
+  --periwinkle-100: #e6e6ff;
+  --periwinkle-200: #d4d4ff;
+  --periwinkle-300: #b8b8ff;
+  --periwinkle-400: #9999ff;
+  --periwinkle-500: #7a7aff;
+}
+
+/* Dark Mode Support */
+html.dark {
+  color-scheme: dark;
+}
+
+.dark {
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --bg-primary: #111827;
+  --bg-secondary: #1f2937;
+  --bg-tertiary: #374151;
+  --border-primary: #4b5563;
+  --border-secondary: #6b7280;
+}
+
+/* Gradient Backgrounds */
+.bg-gradient-purple {
+  background: linear-gradient(135deg, var(--purple-500) 0%, var(--purple-600) 100%);
+}
+
+.bg-gradient-purple-light {
+  background: linear-gradient(135deg, var(--purple-100) 0%, var(--purple-200) 100%);
+}
+
+.bg-gradient-lavender {
+  background: linear-gradient(135deg, var(--lavender-100) 0%, var(--lavender-200) 100%);
+}
+
+.bg-gradient-periwinkle {
+  background: linear-gradient(135deg, var(--periwinkle-100) 0%, var(--periwinkle-200) 100%);
+}
+
+/* Glass Effect */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.25);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px rgba(168, 85, 247, 0.1);
+}
+
+/* Modern Button Styles */
+.btn-primary {
+  @apply bg-gradient-to-r from-purple-500 to-purple-600 text-white font-medium px-6 py-3 rounded-xl;
+  @apply hover:from-purple-600 hover:to-purple-700 transform hover:-translate-y-0.5;
+  @apply transition-all duration-300 shadow-lg hover:shadow-xl;
+  @apply focus:outline-none focus:ring-4 focus:ring-purple-200;
+}
+
+.btn-secondary {
+  @apply bg-white dark:bg-gray-700 text-purple-600 dark:text-purple-400 font-medium px-6 py-3 rounded-xl border border-purple-200 dark:border-gray-600;
+  @apply hover:bg-purple-50 dark:hover:bg-gray-600 hover:border-purple-300 transform hover:-translate-y-0.5;
+  @apply transition-all duration-300 shadow-md hover:shadow-lg;
+  @apply focus:outline-none focus:ring-4 focus:ring-purple-100 dark:focus:ring-purple-900;
+}
+
+.btn-danger {
+  @apply bg-gradient-to-r from-red-500 to-red-600 text-white font-medium px-6 py-3 rounded-xl;
+  @apply hover:from-red-600 hover:to-red-700 transform hover:-translate-y-0.5;
+  @apply transition-all duration-300 shadow-lg hover:shadow-xl;
+  @apply focus:outline-none focus:ring-4 focus:ring-red-200;
+}
+
+.btn-success {
+  @apply bg-gradient-to-r from-green-500 to-green-600 text-white font-medium px-6 py-3 rounded-xl;
+  @apply hover:from-green-600 hover:to-green-700 transform hover:-translate-y-0.5;
+  @apply transition-all duration-300 shadow-lg hover:shadow-xl;
+  @apply focus:outline-none focus:ring-4 focus:ring-green-200;
+}
+
+/* Input Styles */
+.input-modern {
+  @apply w-full px-4 py-3.5 rounded-xl border border-purple-200 dark:border-gray-600 bg-white dark:bg-gray-700;
+  @apply focus:outline-none focus:ring-4 focus:ring-purple-100 dark:focus:ring-purple-900 focus:border-purple-400 dark:focus:border-purple-500;
+  @apply transition-all duration-300 font-medium text-gray-700 dark:text-gray-200;
+  @apply placeholder-gray-400 dark:placeholder-gray-500;
+}
+
+.input-modern:focus {
+  box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1);
+}
+
+/* Card Styles */
+.card-modern {
+  @apply bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-purple-100 dark:border-gray-700;
+  @apply hover:shadow-xl transform hover:-translate-y-1;
+  @apply transition-all duration-300;
+}
+
+.card-glass {
+  @apply glass-effect rounded-2xl;
+  @apply hover:shadow-xl transform hover:-translate-y-1;
+  @apply transition-all duration-300;
+}
+
+/* Floating Animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.float-animation {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Pulse Animation */
+@keyframes pulse-gentle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.pulse-gentle {
+  animation: pulse-gentle 2s ease-in-out infinite;
+}
+
+/* Modern Shadow */
+.shadow-modern {
+  box-shadow: 0 20px 25px -5px rgba(168, 85, 247, 0.1), 
+              0 10px 10px -5px rgba(168, 85, 247, 0.04);
+}
+
+.shadow-modern-hover {
+  box-shadow: 0 25px 30px -5px rgba(168, 85, 247, 0.15), 
+              0 15px 15px -5px rgba(168, 85, 247, 0.08);
+}
+
+/* Typography */
+.text-gradient-purple {
+  background: linear-gradient(135deg, var(--purple-600) 0%, var(--purple-700) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Loading Animation */
+@keyframes spin-smooth {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin-smooth {
+  animation: spin-smooth 1s linear infinite;
+}
+
+/* Icon Hover Effects */
+.icon-hover {
+  @apply transition-all duration-300 transform;
+}
+
+.icon-hover:hover {
+  @apply scale-110 text-purple-600;
+}
+
+/* Badge Styles */
+.badge-purple {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+  @apply bg-purple-100 text-purple-800 border border-purple-200;
+}
+
+.badge-success {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+  @apply bg-green-100 text-green-800 border border-green-200;
+}
+
+.badge-warning {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+  @apply bg-yellow-100 text-yellow-800 border border-yellow-200;
+}
+
+.badge-danger {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+  @apply bg-red-100 text-red-800 border border-red-200;
+}
+
+/* Table Styles */
+.table-modern {
+  @apply w-full bg-white rounded-2xl overflow-hidden shadow-modern;
+}
+
+.table-modern thead {
+  @apply bg-gradient-to-r from-purple-50 to-purple-100;
+}
+
+.table-modern th {
+  @apply px-6 py-4 text-left text-sm font-semibold text-purple-700 uppercase tracking-wider;
+}
+
+.table-modern td {
+  @apply px-6 py-4 whitespace-nowrap text-sm text-gray-700;
+}
+
+.table-modern tbody tr {
+  @apply hover:bg-purple-25 transition-colors duration-200;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .btn-primary, .btn-secondary, .btn-danger, .btn-success {
+    @apply px-4 py-2 text-sm;
+  }
+  
+  .card-modern, .card-glass {
+    @apply rounded-xl;
+  }
+  
+  .input-modern {
+    @apply px-3 py-3 text-sm;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

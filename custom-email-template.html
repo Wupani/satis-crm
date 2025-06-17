@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satış CRM - Şifre Sıfırlama</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background-color: #f3f4f6; 
+            line-height: 1.6; 
+            color: #374151;
+        }
+        .email-container { 
+            max-width: 600px; 
+            margin: 40px auto; 
+            background-color: white; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); 
+            overflow: hidden;
+        }
+        .header { 
+            background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 50%, #6366f1 100%); 
+            color: white; 
+            padding: 40px 30px; 
+            text-align: center; 
+        }
+        .header h1 { 
+            font-size: 28px; 
+            font-weight: 700; 
+            margin-bottom: 8px; 
+        }
+        .header p { 
+            font-size: 16px; 
+            opacity: 0.9; 
+        }
+        .icon { 
+            width: 60px; 
+            height: 60px; 
+            background-color: rgba(255, 255, 255, 0.2); 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 0 auto 20px; 
+            font-size: 24px;
+        }
+        .content { 
+            padding: 40px 30px; 
+        }
+        .content h2 { 
+            color: #1f2937; 
+            font-size: 24px; 
+            margin-bottom: 20px; 
+        }
+        .content p { 
+            margin-bottom: 16px; 
+            color: #6b7280; 
+        }
+        .cta-button { 
+            display: inline-block; 
+            background: linear-gradient(135deg, #a855f7, #6366f1); 
+            color: white; 
+            padding: 16px 32px; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            font-size: 16px;
+            margin: 30px 0; 
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+        }
+        .cta-container { 
+            text-align: center; 
+            margin: 30px 0; 
+        }
+        .warning-box { 
+            background-color: #fef3c7; 
+            border-left: 4px solid #f59e0b; 
+            padding: 20px; 
+            margin: 30px 0; 
+            border-radius: 6px;
+        }
+        .warning-box h3 { 
+            color: #92400e; 
+            font-size: 16px; 
+            margin-bottom: 10px; 
+        }
+        .warning-box ul { 
+            margin-left: 20px; 
+            color: #92400e; 
+        }
+        .security-info { 
+            background-color: #f0f9ff; 
+            border: 1px solid #e0f2fe; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin: 30px 0;
+        }
+        .security-info h3 { 
+            color: #0369a1; 
+            font-size: 16px; 
+            margin-bottom: 10px; 
+        }
+        .footer { 
+            background-color: #f9fafb; 
+            padding: 30px; 
+            text-align: center; 
+            color: #6b7280; 
+            font-size: 14px;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer p { 
+            margin-bottom: 8px; 
+        }
+        .divider { 
+            height: 1px; 
+            background-color: #e5e7eb; 
+            margin: 30px 0; 
+        }
+        @media (max-width: 600px) {
+            .email-container { margin: 20px; }
+            .header, .content { padding: 30px 20px; }
+            .cta-button { padding: 14px 28px; font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="icon">🏢</div>
+            <h1>Satış CRM</h1>
+            <p>Şifre Sıfırlama Talebi</p>
+        </div>
+        
+        <div class="content">
+            <h2>Merhaba! 👋</h2>
+            <p>Satış CRM hesabınız (<strong>%EMAIL%</strong>) için şifre sıfırlama talebinde bulundunuz.</p>
+            
+            <p>Hesabınızın güvenliği bizim için önemlidir. Yeni şifrenizi belirlemek için aşağıdaki butona tıklayın:</p>
+            
+            <div class="cta-container">
+                <a href="%LINK%" class="cta-button">🔒 Şifremi Sıfırla</a>
+            </div>
+            
+            <div class="security-info">
+                <h3>🔐 Güvenlik Bilgisi</h3>
+                <p>Bu bağlantı güvenlik nedeniyle <strong>1 saat</strong> içinde geçerliliğini yitirecektir.</p>
+                <p>Bağlantıya tıkladıktan sonra güçlü bir şifre seçmeyi unutmayın.</p>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div class="warning-box">
+                <h3>⚠️ Bu talep sizden gelmiyorsa:</h3>
+                <ul>
+                    <li>Bu e-postayı dikkate almayın ve silин</li>
+                    <li>Bağlantıya tıklamayın</li>
+                    <li>Şifreniz değiştirilmeyecektir</li>
+                    <li>Hesabınız güvende kalacaktır</li>
+                </ul>
+            </div>
+            
+            <p style="margin-top: 30px; font-size: 14px; color: #9ca3af;">
+                Herhangi bir sorunuz varsa lütfen destek ekibimizle iletişime geçin.
+            </p>
+        </div>
+        
+        <div class="footer">
+            <p><strong>© 2024 Satış CRM</strong></p>
+            <p>Bu e-posta otomatik olarak gönderilmiştir.</p>
+            <p>🔒 256-bit SSL şifreleme ile korunmaktadır</p>
+            <p style="margin-top: 15px; font-size: 12px; color: #9ca3af;">
+                Bu e-postayı almak istemiyorsanız, hesap ayarlarınızdan bildirim tercihlerinizi güncelleyebilirsiniz.
+            </p>
+        </div>
+    </div>
+</body>
+</html> 
