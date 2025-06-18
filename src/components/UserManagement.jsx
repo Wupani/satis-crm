@@ -479,24 +479,24 @@ const UserManagement = () => {
 
       {/* Success Message */}
       {successMessage && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center space-x-2">
-          <CheckCircle className="w-5 h-5 text-green-600" />
-          <p className="text-green-800 whitespace-pre-line">{successMessage}</p>
+        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 flex items-center space-x-2">
+          <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+          <p className="text-green-800 dark:text-green-300 whitespace-pre-line">{successMessage}</p>
         </div>
       )}
 
       {/* Error Message */}
       {errors.general && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center space-x-2">
-          <AlertCircle className="w-5 h-5 text-red-600" />
-          <p className="text-red-800">{errors.general}</p>
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-center space-x-2">
+          <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+          <p className="text-red-800 dark:text-red-300">{errors.general}</p>
         </div>
       )}
 
       {/* Users Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Kullanıcılar ({filteredUsers.length})
           </h2>
         </div>
@@ -507,44 +507,44 @@ const UserManagement = () => {
           </div>
         ) : filteredUsers.length === 0 ? (
           <div className="text-center py-8">
-            <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">Henüz kullanıcı bulunmuyor</p>
+            <Users className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+            <p className="text-gray-600 dark:text-gray-400">Henüz kullanıcı bulunmuyor</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     Kullanıcı
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     E-posta
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     Rol
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     Durum
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     Oluşturulma
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     İşlemler
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
+                  <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
                           <User className="w-5 h-5 text-purple-600" />
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                             {user.name}
                           </div>
                         </div>
@@ -552,8 +552,8 @@ const UserManagement = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <Mail className="w-4 h-4 text-gray-400 mr-2" />
-                        <span className="text-sm text-gray-900">{user.email}</span>
+                        <Mail className="w-4 h-4 text-gray-400 dark:text-gray-500 mr-2" />
+                        <span className="text-sm text-gray-900 dark:text-gray-100">{user.email}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -568,14 +568,14 @@ const UserManagement = () => {
                         {user.isActive !== false ? 'Aktif' : 'Pasif'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                       {user.createdAt?.toDate?.()?.toLocaleDateString('tr-TR') || 'Bilinmiyor'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-center">
                       <div className="flex justify-center space-x-2">
                         <button
                           onClick={() => openEditModal(user)}
-                          className="text-blue-600 hover:text-blue-700 p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 p-2 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
                           title="Düzenle"
                         >
                           <Edit className="w-4 h-4" />
@@ -584,8 +584,8 @@ const UserManagement = () => {
                           onClick={() => openStatusModal(user)}
                           className={`p-2 rounded-lg transition-colors ${
                             user.isActive !== false 
-                              ? 'text-orange-600 hover:text-orange-700 hover:bg-orange-50' 
-                              : 'text-green-600 hover:text-green-700 hover:bg-green-50'
+                              ? 'text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 hover:bg-orange-50 dark:hover:bg-orange-900/30' 
+                              : 'text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/30'
                           }`}
                                                       title={user.isActive !== false ? 'Pasif Yap' : 'Aktif Yap'}
                           >
@@ -593,7 +593,7 @@ const UserManagement = () => {
                         </button>
                         <button
                           onClick={() => openDeleteModal(user)}
-                          className="text-red-600 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition-colors"
+                          className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 p-2 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
                           title="Sil"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -610,12 +610,12 @@ const UserManagement = () => {
 
       {/* Add User Modal */}
       <PortalModal isOpen={showAddModal} onClose={closeModal}>
-        <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl">
-            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-900">Yeni Kullanıcı Ekle</h3>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Yeni Kullanıcı Ekle</h3>
               <button
                 onClick={closeModal}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -624,35 +624,35 @@ const UserManagement = () => {
             <form onSubmit={handleAddUser} className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     İsim Soyisim
                   </label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500"
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500"
                     placeholder="Kullanıcının adını girin"
                   />
-                  {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name}</p>}
+                  {errors.name && <p className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.name}</p>}
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     E-posta
                   </label>
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500"
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500"
                     placeholder="kullanici@example.com"
                   />
-                  {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
+                  {errors.email && <p className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.email}</p>}
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Şifre
                   </label>
                   <div className="relative">
@@ -660,19 +660,19 @@ const UserManagement = () => {
                       type={showPassword ? 'text' : 'password'}
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-3 py-2 pr-10 focus:ring-purple-500 focus:border-purple-500"
                       placeholder={systemSettings ? `En az ${systemSettings.security?.passwordMinLength || 8} karakter` : "En az 8 karakter"}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-2.5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
                   {systemSettings && (
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       Şifre gereksinimleri: 
                       {systemSettings.security?.passwordMinLength && ` ${systemSettings.security.passwordMinLength}+ karakter`}
                       {systemSettings.security?.passwordRequireUppercase && ', büyük harf'}
@@ -680,23 +680,23 @@ const UserManagement = () => {
                       {systemSettings.security?.passwordRequireSpecialChars && ', özel karakter'}
                     </div>
                   )}
-                  {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password}</p>}
+                  {errors.password && <p className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.password}</p>}
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Rol
                   </label>
                   <select
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500"
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500"
                   >
                     {roles.map(role => (
                       <option key={role} value={role}>{role}</option>
                     ))}
                   </select>
-                  {errors.role && <p className="text-red-600 text-sm mt-1">{errors.role}</p>}
+                  {errors.role && <p className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.role}</p>}
                 </div>
               </div>
               
@@ -704,7 +704,7 @@ const UserManagement = () => {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                 >
                   İptal
                 </button>
@@ -729,12 +729,12 @@ const UserManagement = () => {
 
       {/* Edit User Modal */}
       <PortalModal isOpen={showEditModal} onClose={closeModal}>
-        <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl">
-            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-900">Kullanıcı Düzenle</h3>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Kullanıcı Düzenle</h3>
               <button
                 onClick={closeModal}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -743,47 +743,47 @@ const UserManagement = () => {
             <form onSubmit={handleEditUser} className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     İsim Soyisim
                   </label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500"
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500"
                     placeholder="Kullanıcının adını girin"
                   />
-                  {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name}</p>}
+                  {errors.name && <p className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.name}</p>}
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     E-posta
                   </label>
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500"
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500"
                     placeholder="kullanici@example.com"
                   />
-                  {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
+                  {errors.email && <p className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.email}</p>}
                 </div>
                 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Rol
                   </label>
                   <select
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500"
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-3 py-2 focus:ring-purple-500 focus:border-purple-500"
                   >
                     {roles.map(role => (
                       <option key={role} value={role}>{role}</option>
                     ))}
                   </select>
-                  {errors.role && <p className="text-red-600 text-sm mt-1">{errors.role}</p>}
+                  {errors.role && <p className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.role}</p>}
                 </div>
               </div>
               
@@ -791,7 +791,7 @@ const UserManagement = () => {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                 >
                   İptal
                 </button>
@@ -816,26 +816,26 @@ const UserManagement = () => {
 
       {/* Delete Confirmation Modal */}
       <PortalModal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
-        <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
               <Trash2 className="w-5 h-5 text-red-600 mr-2" />
               Kullanıcı Sil
             </h3>
           </div>
           
           <div className="p-6">
-            <p className="text-gray-700 mb-4">
+            <p className="text-gray-700 dark:text-gray-300 mb-4">
               <strong>{selectedUser?.name}</strong> kullanıcısını silmek istediğinizden emin misiniz?
             </p>
-            <p className="text-sm text-gray-500 mb-6">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
               Bu işlem geri alınamaz ve kullanıcının tüm verileri silinecektir.
             </p>
             
             <div className="flex space-x-3">
               <button
                 onClick={() => setShowDeleteModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
               >
                 İptal
               </button>
@@ -860,9 +860,9 @@ const UserManagement = () => {
 
       {/* Status Change Confirmation Modal */}
       <PortalModal isOpen={showStatusModal} onClose={() => setShowStatusModal(false)}>
-        <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center">
               {actionType === 'activate' ? (
                 <UserCheck className="w-5 h-5 text-green-600 mr-2" />
               ) : (
@@ -873,7 +873,7 @@ const UserManagement = () => {
           </div>
           
           <div className="p-6">
-            <p className="text-gray-700 mb-4">
+            <p className="text-gray-700 dark:text-gray-300 mb-4">
               <strong>{selectedUser?.name}</strong> kullanıcısını{' '}
               <span className={actionType === 'activate' ? 'text-green-600 font-semibold' : 'text-orange-600 font-semibold'}>
                 {actionType === 'activate' ? 'aktif' : 'pasif'}
@@ -882,8 +882,8 @@ const UserManagement = () => {
             </p>
             
             {actionType === 'deactivate' && (
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 mb-4">
-                <p className="text-sm text-orange-700">
+              <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-3 mb-4">
+                <p className="text-sm text-orange-700 dark:text-orange-300">
                   ⚠️ Pasif yapılan kullanıcı sisteme giriş yapamayacaktır.
                 </p>
               </div>
@@ -892,7 +892,7 @@ const UserManagement = () => {
             <div className="flex space-x-3">
               <button
                 onClick={() => setShowStatusModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
               >
                 İptal
               </button>

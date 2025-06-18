@@ -119,11 +119,11 @@ const DropdownSettings = () => {
     <div className="p-6">
       <div className="mb-6 flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center">
             <Settings className="h-6 w-6 mr-2" />
             Açılır Liste Ayarları
           </h2>
-          <p className="text-gray-600 mt-1">Yeni kayıt formundaki açılır listeleri yönetin</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Yeni kayıt formundaki açılır listeleri yönetin</p>
         </div>
         
         <button
@@ -137,14 +137,14 @@ const DropdownSettings = () => {
       </div>
 
       {success && (
-        <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded flex items-center">
+        <div className="mb-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 px-4 py-3 rounded flex items-center">
           <CheckCircle className="h-4 w-4 mr-2" />
           {success}
         </div>
       )}
 
       {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded flex items-center">
+        <div className="mb-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded flex items-center">
           <AlertCircle className="h-4 w-4 mr-2" />
           {error}
         </div>
@@ -152,9 +152,9 @@ const DropdownSettings = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {Object.entries(dropdownData).map(([listKey, items]) => (
-          <div key={listKey} className="bg-white rounded-lg shadow-sm border p-6">
+          <div key={listKey} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900 flex items-center">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 flex items-center">
                 <List className="h-5 w-5 mr-2" />
                 {dropdownLabels[listKey]}
               </h3>
@@ -169,11 +169,11 @@ const DropdownSettings = () => {
             
             <div className="space-y-2">
               {items.map((item, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
-                  <span className="text-gray-900">{item}</span>
+                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-md">
+                  <span className="text-gray-900 dark:text-gray-100">{item}</span>
                   <button
                     onClick={() => handleRemoveItem(listKey, index)}
-                    className="text-red-600 hover:text-red-800 p-1"
+                    className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 p-1"
                     title="Sil"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -182,7 +182,7 @@ const DropdownSettings = () => {
               ))}
               
               {items.length === 0 && (
-                <p className="text-gray-500 text-center py-4">Henüz değer eklenmemiş</p>
+                <p className="text-gray-500 dark:text-gray-400 text-center py-4">Henüz değer eklenmemiş</p>
               )}
             </div>
           </div>

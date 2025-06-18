@@ -821,17 +821,17 @@ const RecordTable = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
                       {record.kanal}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      record.durum === 'Arandı' ? 'bg-green-100 text-green-800' :
-                      record.durum === 'Meşgul' ? 'bg-yellow-100 text-yellow-800' :
-                      record.durum === 'Ulaşılamadı' ? 'bg-red-100 text-red-800' :
-                      record.durum === 'Geri Arama' ? 'bg-purple-100 text-purple-800' :
-                      'bg-gray-100 text-gray-800'
+                      record.durum === 'Arandı' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' :
+                      record.durum === 'Meşgul' ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200' :
+                      record.durum === 'Ulaşılamadı' ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200' :
+                      record.durum === 'Geri Arama' ? 'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200' :
+                      'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
                     }`}>
                       {record.durum}
                     </span>
@@ -852,7 +852,7 @@ const RecordTable = () => {
                     <div className="flex items-center justify-end space-x-2">
                       <button 
                         onClick={() => handleEditRecord(record)}
-                        className="text-blue-600 hover:text-blue-900 p-1"
+                        className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 p-1 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
                         title="Kaydı Düzenle"
                       >
                         <Edit className="h-4 w-4" />
@@ -862,11 +862,11 @@ const RecordTable = () => {
                         <button
                           onClick={() => handleDeleteRecord(record.id, record.refId)}
                           disabled={deleting === record.id}
-                          className="text-red-600 hover:text-red-900 p-1 disabled:opacity-50"
+                          className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 p-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
                           title="Kaydı Sil"
                         >
                           {deleting === record.id ? (
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600"></div>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600 dark:border-red-400"></div>
                           ) : (
                             <Trash2 className="h-4 w-4" />
                           )}
@@ -905,7 +905,7 @@ const RecordTable = () => {
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="relative inline-flex items-center px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="relative inline-flex items-center px-3 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 ← Önceki
               </button>
@@ -927,10 +927,10 @@ const RecordTable = () => {
                   <button
                     key={pageNum}
                     onClick={() => handlePageChange(pageNum)}
-                    className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium hover:bg-gray-50 ${
+                    className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                       currentPage === pageNum
-                        ? 'z-10 bg-blue-600 border-blue-600 text-white hover:bg-blue-700'
-                        : 'bg-white border-gray-300 text-gray-500'
+                        ? 'z-10 bg-blue-600 dark:bg-blue-600 border-blue-600 dark:border-blue-600 text-white hover:bg-blue-700 dark:hover:bg-blue-700'
+                        : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
                     }`}
                   >
                     {pageNum}
@@ -942,7 +942,7 @@ const RecordTable = () => {
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="relative inline-flex items-center px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="relative inline-flex items-center px-3 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Sonraki →
               </button>
@@ -954,14 +954,14 @@ const RecordTable = () => {
             <button
               onClick={() => handlePageChange(1)}
               disabled={currentPage === 1}
-              className="px-3 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               İlk Sayfa
             </button>
             <button
               onClick={() => handlePageChange(totalPages)}
               disabled={currentPage === totalPages}
-              className="px-3 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Son Sayfa
             </button>
@@ -971,13 +971,13 @@ const RecordTable = () => {
 
       {/* Düzenleme Modal */}
       <PortalModal isOpen={editModal} onClose={handleCancelEdit}>
-        <div className="w-full max-w-4xl p-6 border shadow-xl rounded-lg bg-white" style={{ minWidth: '90vw', maxWidth: '95vw' }}>
+        <div className="w-full max-w-4xl p-6 border border-gray-200 dark:border-gray-700 shadow-xl rounded-lg bg-white dark:bg-gray-800" style={{ minWidth: '90vw', maxWidth: '95vw' }}>
             <div className="mt-3">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-900">Kayıt Düzenle</h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Kayıt Düzenle</h3>
                 <button
                   onClick={handleCancelEdit}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -987,45 +987,45 @@ const RecordTable = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Personel</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Personel</label>
                   <input
                     type="text"
                     name="personel"
                     value={editForm.personel}
                     onChange={handleEditFormChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tarih</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tarih</label>
                   <input
                     type="date"
                     name="tarih"
                     value={editForm.tarih}
                     onChange={handleEditFormChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Telefon</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Telefon</label>
                   <input
                     type="text"
                     name="telefon"
                     value={editForm.telefon}
                     onChange={handleEditFormChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Kanal</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kanal</label>
                   <select
                     name="kanal"
                     value={editForm.kanal}
                     onChange={handleEditFormChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Seçiniz</option>
                     {dropdownOptions.kanalList.map((kanal, index) => (
@@ -1035,12 +1035,12 @@ const RecordTable = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Durum</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Durum</label>
                   <select
                     name="durum"
                     value={editForm.durum}
                     onChange={handleEditFormChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Seçiniz</option>
                     {dropdownOptions.durumList.map((durum, index) => (
@@ -1050,12 +1050,12 @@ const RecordTable = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Satış Detayı</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Satış Detayı</label>
                   <select
                     name="detay"
                     value={editForm.detay}
                     onChange={handleEditFormChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Seçiniz</option>
                     {dropdownOptions.detayList.map((detay, index) => (
@@ -1065,12 +1065,12 @@ const RecordTable = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Abonelik Durumu</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Abonelik Durumu</label>
                   <select
                     name="abonelikDurum"
                     value={editForm.abonelikDurum}
                     onChange={handleEditFormChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Seçiniz</option>
                     {dropdownOptions.abonelikDurumList.map((abonelikDurum, index) => (
@@ -1080,24 +1080,24 @@ const RecordTable = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Abone No</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Abone No</label>
                   <input
                     type="text"
                     name="aboneNo"
                     value={editForm.aboneNo}
                     onChange={handleEditFormChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 
                 <div className="md:col-span-2 lg:col-span-3">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Not</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Not</label>
                   <textarea
                     name="not"
                     value={editForm.not}
                     onChange={handleEditFormChange}
                     rows="4"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   ></textarea>
                 </div>
               </div>
@@ -1105,13 +1105,13 @@ const RecordTable = () => {
               <div className="flex justify-end space-x-3 mt-6">
                 <button
                   onClick={handleCancelEdit}
-                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                  className="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400"
                 >
                   İptal
                 </button>
                 <button
                   onClick={handleSaveEdit}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-4 py-2 bg-blue-600 dark:bg-blue-600 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                 >
                   Kaydet
                 </button>
