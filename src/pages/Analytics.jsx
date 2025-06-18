@@ -937,27 +937,7 @@ const Analytics = () => {
             </div>
           </div>
 
-          {/* Team Performance Link */}
-          <div className="card-modern p-6 text-center">
-            <div className="flex items-center justify-center mb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                <Users className="h-8 w-8 text-white" />
-              </div>
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-              Takım Performansı Karşılaştırması
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Takım liderlerinin ve üyelerinin detaylı performans analizini görüntüleyin
-            </p>
-            <a
-              href="/team-performance"
-              className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all transform hover:scale-105"
-            >
-              <BarChart3 className="h-5 w-5" />
-              <span className="font-medium">Takım Performansını Görüntüle</span>
-            </a>
-          </div>
+
 
           {/* Personnel Performance */}
           <div className="card-modern p-6">
