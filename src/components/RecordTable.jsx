@@ -6,6 +6,7 @@ import { db } from '../auth/firebaseConfig';
 import { formatDate, formatPhoneNumber } from '../utils/helpers';
 import { Edit, Phone, Calendar, User, Filter, Trash2 } from 'lucide-react';
 import Modal from './Modal';
+import logger from '../utils/logger';
 
 // Portal Modal Component
 const PortalModal = ({ isOpen, onClose, children }) => {
@@ -429,6 +430,13 @@ const RecordTable = () => {
       setDeleting(recordId);
       setModal({ ...modal, isOpen: false });
       
+      // Silinen kaydın bilgilerini logla
+      await logger.logSalesRecordDeleted(
+        currentUser.uid,
+        currentUser.name || currentUser.email?.split('@')[0] || 'Kullanıcı',
+        recordId
+      );
+      
       await deleteDoc(doc(db, 'sales_records', recordId));
       
       // Tabloyu yenile
@@ -543,10 +551,28 @@ const RecordTable = () => {
       const { updateDoc } = await import('firebase/firestore');
       const recordRef = doc(db, 'sales_records', editingRecord.id);
       
+      // Değişiklikleri tespit et
+      const changes = {};
+      Object.keys(editForm).forEach(key => {
+        if (editingRecord[key] !== editForm[key]) {
+          changes[key] = { from: editingRecord[key], to: editForm[key] };
+        }
+      });
+      
       await updateDoc(recordRef, {
         ...editForm,
         updatedAt: new Date()
       });
+
+      // Güncelleme işlemini logla
+      if (Object.keys(changes).length > 0) {
+        await logger.logSalesRecordUpdated(
+          currentUser.uid,
+          currentUser.name || currentUser.email?.split('@')[0] || 'Kullanıcı',
+          editingRecord.id,
+          changes
+        );
+      }
 
       // Önce edit modal'ını kapat
       closeEditModal();

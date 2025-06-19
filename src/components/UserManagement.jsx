@@ -15,6 +15,7 @@ import {
 } from 'firebase/auth';
 import { db, auth } from '../auth/firebaseConfig';
 import { useAuth } from '../context/AuthContext';
+import logger from '../utils/logger';
 import { 
   Users, 
   Plus, 
@@ -264,6 +265,14 @@ const UserManagement = () => {
         isActive: true
       });
       
+      // Kullanıcı oluşturma işlemini logla
+      await logger.logUserCreated(
+        currentUser.uid,
+        currentUser.name || currentUser.email?.split('@')[0] || 'Admin',
+        formData.email,
+        formData.role
+      );
+      
       // Admin kullanıcısını tekrar giriş yaptır
       await signInWithEmailAndPassword(auth, adminEmail, 'admin123'); // Admin şifresi
       
@@ -296,12 +305,29 @@ const UserManagement = () => {
       setLoading(true);
       
       const userRef = doc(db, 'users', editingUser.id);
+      
+      // Değişiklikleri tespit et
+      const changes = {};
+      if (editingUser.email !== formData.email) changes.email = { from: editingUser.email, to: formData.email };
+      if (editingUser.name !== formData.name) changes.name = { from: editingUser.name, to: formData.name };
+      if (editingUser.role !== formData.role) changes.role = { from: editingUser.role, to: formData.role };
+      
       await updateDoc(userRef, {
         email: formData.email,
         name: formData.name,
         role: formData.role,
         updatedAt: new Date()
       });
+      
+      // Kullanıcı güncelleme işlemini logla
+      if (Object.keys(changes).length > 0) {
+        await logger.logUserUpdated(
+          currentUser.uid,
+          currentUser.name || currentUser.email?.split('@')[0] || 'Admin',
+          editingUser.email,
+          changes
+        );
+      }
       
       setSuccessMessage('Kullanıcı başarıyla güncellendi!');
       setTimeout(() => setSuccessMessage(''), 3000);
@@ -320,6 +346,13 @@ const UserManagement = () => {
   const handleDeleteUser = async () => {
     try {
       setLoading(true);
+      
+      // Kullanıcı silme işlemini logla
+      await logger.logUserDeleted(
+        currentUser.uid,
+        currentUser.name || currentUser.email?.split('@')[0] || 'Admin',
+        selectedUser.email
+      );
       
       await deleteDoc(doc(db, 'users', selectedUser.id));
       
@@ -356,6 +389,21 @@ const UserManagement = () => {
         isActive: newStatus,
         updatedAt: new Date()
       });
+      
+      // Kullanıcı aktivasyon/deaktivasyon işlemini logla
+      if (newStatus) {
+        await logger.logUserActivated(
+          currentUser.uid,
+          currentUser.name || currentUser.email?.split('@')[0] || 'Admin',
+          selectedUser.email
+        );
+      } else {
+        await logger.logUserDeactivated(
+          currentUser.uid,
+          currentUser.name || currentUser.email?.split('@')[0] || 'Admin',
+          selectedUser.email
+        );
+      }
       
       setSuccessMessage(`Kullanıcı durumu ${statusText} olarak güncellendi!`);
       setTimeout(() => setSuccessMessage(''), 3000);

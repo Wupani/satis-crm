@@ -15,6 +15,7 @@ import TargetManagement from './components/TargetManagement';
 import TeamManagement from './components/TeamManagement';
 import DropdownSettings from './components/DropdownSettings';
 import SystemSettings from './pages/SystemSettings';
+import SystemLogs from './pages/SystemLogs';
 import RoleGuard from './components/RoleGuard';
 import './App.css';
 
@@ -249,6 +250,18 @@ function AppContent() {
             <ProtectedRoute>
               <MainLayout>
                 <SystemSettings />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/system-logs"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <RoleGuard allowedRoles={['admin']}>
+                  <SystemLogs />
+                </RoleGuard>
               </MainLayout>
             </ProtectedRoute>
           }

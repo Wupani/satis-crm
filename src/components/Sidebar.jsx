@@ -20,7 +20,8 @@ import {
   List,
   ChevronDown,
   ChevronUp,
-  Building2
+  Building2,
+  Shield
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -116,6 +117,12 @@ const Sidebar = () => {
               icon: Settings,
               label: 'Sistem Ayarları',
               description: 'Uygulama konfigürasyonu'
+            },
+            {
+              path: '/system-logs',
+              icon: Shield,
+              label: 'Sistem Log Kayıtları',
+              description: 'Güvenlik ve aktivite logları'
             }
           ]
         }

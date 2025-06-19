@@ -5,6 +5,7 @@ import { db } from '../auth/firebaseConfig';
 import { generateRefId, formatDateForInput } from '../utils/helpers';
 import { Save, AlertCircle } from 'lucide-react';
 import Modal from './Modal';
+import logger from '../utils/logger';
 
 const RecordForm = () => {
   const { currentUser, userRole } = useAuth();
@@ -234,6 +235,13 @@ const RecordForm = () => {
       };
 
       await addDoc(collection(db, 'sales_records'), docData);
+      
+      // Satış kaydı oluşturma işlemini logla
+      await logger.logSalesRecordCreated(
+        currentUser.uid,
+        currentUser.name || currentUser.email?.split('@')[0] || 'Kullanıcı',
+        formData
+      );
       
       // Form'u resetle
       setFormData({

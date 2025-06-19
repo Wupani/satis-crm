@@ -1,37 +1,303 @@
 // Güvenli logger utility
 // Production ortamında console.log'ları devre dışı bırakır
 
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../auth/firebaseConfig';
+
 const isDevelopment = import.meta.env.MODE === 'development';
 
-export const logger = {
-  log: (...args) => {
-    if (isDevelopment) {
-      console.log(...args);
-    }
-  },
-  
-  warn: (...args) => {
-    if (isDevelopment) {
-      console.warn(...args);
-    }
-  },
-  
-  error: (...args) => {
-    // Error logları production'da da gösterilsin ama hassas bilgi içermeyecek şekilde
-    if (isDevelopment) {
-      console.error(...args);
-    } else {
-      // Production'da sadece genel hata mesajı
-      console.error('Bir hata oluştu. Detaylar için destek ekibiyle iletişime geçin.');
-    }
-  },
-  
-  info: (...args) => {
-    if (isDevelopment) {
-      console.info(...args);
+// Log seviyeleri
+export const LOG_LEVELS = {
+  INFO: 'info',
+  WARNING: 'warning',
+  ERROR: 'error',
+  SUCCESS: 'success',
+  SECURITY: 'security'
+};
+
+// Log kategorileri
+export const LOG_CATEGORIES = {
+  AUTH: 'authentication',
+  USER_MANAGEMENT: 'user_management',
+  SALES: 'sales',
+  SYSTEM: 'system',
+  DATA: 'data',
+  SECURITY: 'security'
+};
+
+class Logger {
+  constructor() {
+    this.isEnabled = true;
+  }
+
+  async log(level, category, action, details = {}, userId = null, userName = null) {
+    if (!this.isEnabled) return;
+
+    try {
+      const logEntry = {
+        level,
+        category,
+        action,
+        details: typeof details === 'object' ? details : { message: details },
+        userId: userId || 'system',
+        userName: userName || 'System',
+        timestamp: serverTimestamp(),
+        userAgent: navigator.userAgent,
+        url: window.location.href,
+        ip: await this.getClientIP()
+      };
+
+      // Console'a da yazdır (development için)
+      const consoleMethod = this.getConsoleMethod(level);
+      consoleMethod(`[${level.toUpperCase()}] ${category}: ${action}`, details);
+
+      // Firebase'e kaydet
+      await addDoc(collection(db, 'system_logs'), logEntry);
+    } catch (error) {
+      console.error('Log kaydedilirken hata:', error);
     }
   }
-};
+
+  getConsoleMethod(level) {
+    switch (level) {
+      case LOG_LEVELS.ERROR:
+        return console.error;
+      case LOG_LEVELS.WARNING:
+        return console.warn;
+      case LOG_LEVELS.SUCCESS:
+      case LOG_LEVELS.INFO:
+        return console.info;
+      case LOG_LEVELS.SECURITY:
+        return console.warn;
+      default:
+        return console.log;
+    }
+  }
+
+  async getClientIP() {
+    try {
+      // Basit IP alma (production'da daha güvenli yöntemler kullanılabilir)
+      const response = await fetch('https://api.ipify.org?format=json');
+      const data = await response.json();
+      return data.ip;
+    } catch {
+      return 'unknown';
+    }
+  }
+
+  // Kolay kullanım methodları
+  async info(category, action, details, userId, userName) {
+    return this.log(LOG_LEVELS.INFO, category, action, details, userId, userName);
+  }
+
+  async warning(category, action, details, userId, userName) {
+    return this.log(LOG_LEVELS.WARNING, category, action, details, userId, userName);
+  }
+
+  async error(category, action, details, userId, userName) {
+    return this.log(LOG_LEVELS.ERROR, category, action, details, userId, userName);
+  }
+
+  async success(category, action, details, userId, userName) {
+    return this.log(LOG_LEVELS.SUCCESS, category, action, details, userId, userName);
+  }
+
+  async security(category, action, details, userId, userName) {
+    return this.log(LOG_LEVELS.SECURITY, category, action, details, userId, userName);
+  }
+
+  // Özel log methodları
+  async logUserLogin(userId, userName, email) {
+    return this.success(
+      LOG_CATEGORIES.AUTH,
+      'User Login',
+      {
+        email,
+        loginTime: new Date().toISOString()
+      },
+      userId,
+      userName
+    );
+  }
+
+  async logUserLogout(userId, userName, email) {
+    return this.info(
+      LOG_CATEGORIES.AUTH,
+      'User Logout',
+      {
+        email,
+        logoutTime: new Date().toISOString()
+      },
+      userId,
+      userName
+    );
+  }
+
+  async logFailedLogin(email, reason) {
+    return this.warning(
+      LOG_CATEGORIES.SECURITY,
+      'Failed Login Attempt',
+      {
+        email,
+        reason,
+        attemptTime: new Date().toISOString()
+      }
+    );
+  }
+
+  async logUserCreated(adminUserId, adminUserName, newUserEmail, newUserRole) {
+    return this.success(
+      LOG_CATEGORIES.USER_MANAGEMENT,
+      'User Created',
+      {
+        newUserEmail,
+        newUserRole,
+        createdBy: adminUserName
+      },
+      adminUserId,
+      adminUserName
+    );
+  }
+
+  async logUserUpdated(adminUserId, adminUserName, targetUserEmail, changes) {
+    return this.info(
+      LOG_CATEGORIES.USER_MANAGEMENT,
+      'User Updated',
+      {
+        targetUserEmail,
+        changes,
+        updatedBy: adminUserName
+      },
+      adminUserId,
+      adminUserName
+    );
+  }
+
+  async logUserDeleted(adminUserId, adminUserName, deletedUserEmail) {
+    return this.warning(
+      LOG_CATEGORIES.USER_MANAGEMENT,
+      'User Deleted',
+      {
+        deletedUserEmail,
+        deletedBy: adminUserName
+      },
+      adminUserId,
+      adminUserName
+    );
+  }
+
+  async logUserActivated(adminUserId, adminUserName, targetUserEmail) {
+    return this.success(
+      LOG_CATEGORIES.USER_MANAGEMENT,
+      'User Activated',
+      {
+        targetUserEmail,
+        activatedBy: adminUserName
+      },
+      adminUserId,
+      adminUserName
+    );
+  }
+
+  async logUserDeactivated(adminUserId, adminUserName, targetUserEmail) {
+    return this.warning(
+      LOG_CATEGORIES.USER_MANAGEMENT,
+      'User Deactivated',
+      {
+        targetUserEmail,
+        deactivatedBy: adminUserName
+      },
+      adminUserId,
+      adminUserName
+    );
+  }
+
+  async logSalesRecordCreated(userId, userName, recordDetails) {
+    return this.success(
+      LOG_CATEGORIES.SALES,
+      'Sales Record Created',
+      {
+        customerPhone: recordDetails.telefon,
+        channel: recordDetails.kanal,
+        status: recordDetails.durum
+      },
+      userId,
+      userName
+    );
+  }
+
+  async logSalesRecordUpdated(userId, userName, recordId, changes) {
+    return this.info(
+      LOG_CATEGORIES.SALES,
+      'Sales Record Updated',
+      {
+        recordId,
+        changes
+      },
+      userId,
+      userName
+    );
+  }
+
+  async logSalesRecordDeleted(userId, userName, recordId) {
+    return this.warning(
+      LOG_CATEGORIES.SALES,
+      'Sales Record Deleted',
+      {
+        recordId
+      },
+      userId,
+      userName
+    );
+  }
+
+  async logSystemSettingsChanged(adminUserId, adminUserName, settingType, changes) {
+    return this.info(
+      LOG_CATEGORIES.SYSTEM,
+      'System Settings Changed',
+      {
+        settingType,
+        changes,
+        changedBy: adminUserName
+      },
+      adminUserId,
+      adminUserName
+    );
+  }
+
+  async logDataExport(userId, userName, exportType, recordCount) {
+    return this.info(
+      LOG_CATEGORIES.DATA,
+      'Data Export',
+      {
+        exportType,
+        recordCount,
+        exportTime: new Date().toISOString()
+      },
+      userId,
+      userName
+    );
+  }
+
+  async logUnauthorizedAccess(userId, userName, attemptedAction, resource) {
+    return this.security(
+      LOG_CATEGORIES.SECURITY,
+      'Unauthorized Access Attempt',
+      {
+        attemptedAction,
+        resource,
+        attemptTime: new Date().toISOString()
+      },
+      userId,
+      userName
+    );
+  }
+}
+
+// Singleton instance
+const logger = new Logger();
+
+export default logger;
 
 // Development ortamında console'u override etmek için
 export const setupSecureLogging = () => {

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { LogIn, Eye, EyeOff, Mail, Lock, AlertCircle, Send, X } from 'lucide-react';
+import logger from '../utils/logger';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -29,22 +30,43 @@ const Login = () => {
     try {
       setError('');
       setLoading(true);
-      await login(email, password);
+      const userCredential = await login(email, password);
+      
+      // Başarılı giriş logla
+      if (userCredential?.user) {
+        await logger.logUserLogin(
+          userCredential.user.uid,
+          userCredential.user.displayName || userCredential.user.email?.split('@')[0] || 'Kullanıcı',
+          email
+        );
+      }
     } catch (error) {
       console.error('Giriş hatası:', error);
+      
+      // Başarısız giriş logla
+      let errorReason = 'Bilinmeyen hata';
       if (error.message.includes('Hesabınız pasif')) {
         setError('Hesabınız pasif durumda. Lütfen yöneticinizle iletişime geçin.');
+        errorReason = 'Hesap pasif durumda';
       } else if (error.code === 'auth/user-not-found') {
         setError('Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı.');
+        errorReason = 'Kullanıcı bulunamadı';
       } else if (error.code === 'auth/wrong-password') {
         setError('Hatalı şifre.');
+        errorReason = 'Hatalı şifre';
       } else if (error.code === 'auth/invalid-email') {
         setError('Geçersiz e-posta adresi.');
+        errorReason = 'Geçersiz e-posta';
       } else if (error.code === 'auth/invalid-credential') {
         setError('Geçersiz e-posta veya şifre.');
+        errorReason = 'Geçersiz bilgiler';
       } else {
         setError('Giriş yapılırken bir hata oluştu. Lütfen tekrar deneyin.');
+        errorReason = error.message || 'Giriş hatası';
       }
+      
+      // Başarısız giriş denemesini logla
+      await logger.logFailedLogin(email, errorReason);
     }
     setLoading(false);
   };

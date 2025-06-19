@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../auth/firebaseConfig';
+import { useAuth } from '../context/AuthContext';
+import logger from '../utils/logger';
 import { 
   Settings, 
   Plus, 
@@ -12,6 +14,7 @@ import {
 } from 'lucide-react';
 
 const DropdownSettings = () => {
+  const { currentUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState('');
@@ -95,6 +98,17 @@ const DropdownSettings = () => {
         ...dropdownData,
         updatedAt: new Date()
       });
+      
+      // Dropdown ayarları değişikliğini logla
+      await logger.logSystemSettingsChanged(
+        currentUser.uid,
+        currentUser.name || currentUser.email?.split('@')[0] || 'Admin',
+        'Dropdown Settings',
+        { dropdownOptions: Object.keys(dropdownData).reduce((acc, key) => {
+          acc[key] = dropdownData[key].length + ' items';
+          return acc;
+        }, {}) }
+      );
       
       setSuccess('Ayarlar başarıyla kaydedildi!');
       setTimeout(() => setSuccess(''), 3000);

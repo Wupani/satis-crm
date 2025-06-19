@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../auth/firebaseConfig';
+import logger from '../utils/logger';
 
 const AuthContext = createContext();
 
@@ -40,6 +41,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
+    // Çıkış yapmadan önce log kaydet
+    if (currentUser) {
+      await logger.logUserLogout(
+        currentUser.uid,
+        currentUser.name || currentUser.email?.split('@')[0] || 'Kullanıcı',
+        currentUser.email
+      );
+    }
+    
     await signOut(auth);
     setUserRole(null);
   };
