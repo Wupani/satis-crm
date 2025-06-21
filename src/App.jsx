@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
 import MonthlyComparison from './pages/MonthlyComparison';
 import TeamPerformance from './pages/TeamPerformance';
+import DuplicateNumbers from './pages/DuplicateNumbers';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import RecordForm from './components/RecordForm';
@@ -317,6 +318,18 @@ function AppContent() {
             <ProtectedRoute>
               <MainLayout>
                 <TeamPerformance />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/duplicate-numbers"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <RoleGuard allowedRoles={['admin', 'teamLeader']}>
+                  <DuplicateNumbers />
+                </RoleGuard>
               </MainLayout>
             </ProtectedRoute>
           }

@@ -23,7 +23,9 @@ import {
   ChevronUp,
   Building2,
   Shield,
-  RefreshCw
+  RefreshCw,
+  Loader2,
+  Phone
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -32,6 +34,8 @@ const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState(new Set(['Genel'])); // Anasayfa kategorisi default açık
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [loadingPath, setLoadingPath] = useState(null);
 
   // Memoize navigation items to prevent recalculation on every render
   const navigationCategories = useMemo(() => {
@@ -85,6 +89,12 @@ const Sidebar = () => {
               icon: TrendingUp,
               label: 'Takım Performansı',
               description: 'Takım performansı karşılaştırması'
+            },
+            {
+              path: '/duplicate-numbers',
+              icon: Phone,
+              label: 'Mükerrer Numaralar',
+              description: 'Aynı numaradan gelen çoklu aramalar'
             }
           ]
         },
@@ -218,6 +228,12 @@ const Sidebar = () => {
               icon: Target,
               label: 'Hedef Yönetimi',
               description: 'Takım hedeflerini belirle'
+            },
+            {
+              path: '/duplicate-numbers',
+              icon: Phone,
+              label: 'Mükerrer Numaralar',
+              description: 'Aynı numaradan gelen çoklu aramalar'
             }
           ]
         }
@@ -260,9 +276,25 @@ const Sidebar = () => {
 
   const isActive = (path) => location.pathname === path;
 
-  const handleMenuClick = useCallback(async (item) => {
+  const handleMenuClick = useCallback(async (item, event) => {
+    // Eğer zaten navigasyon yapılıyorsa, tıklamayı engelle
+    if (isNavigating) {
+      event.preventDefault();
+      return;
+    }
+
+    // Loading state'i aktifleştir
+    setIsNavigating(true);
+    setLoadingPath(item.path);
+    
     // Önce UI'ı güncelle (hızlı)
     setIsMobileOpen(false);
+    
+    // Navigasyon sonrası loading state'i temizle
+    setTimeout(() => {
+      setIsNavigating(false);
+      setLoadingPath(null);
+    }, 1000); // 1 saniye sonra tekrar tıklayabilir
     
     // Logging'i arka planda yap (non-blocking)
     if (currentUser && currentUser.uid !== 'wupaniyazilim@gmail.com') {
@@ -280,7 +312,7 @@ const Sidebar = () => {
         }
       }, 0);
     }
-  }, [currentUser]);
+  }, [currentUser, isNavigating]);
 
   const toggleSidebar = useCallback(() => {
     setIsCollapsed(prev => !prev);
@@ -328,31 +360,49 @@ const Sidebar = () => {
   // Optimize edilmiş MenuItem component
   const MenuItem = useCallback(({ item, isCollapsed, active, onMenuClick }) => {
     const Icon = item.icon;
+    const isLoading = loadingPath === item.path;
+    const isDisabled = isNavigating && !isLoading;
     
     return (
       <li>
         <Link
           to={item.path}
-          onClick={() => onMenuClick(item)}
+          onClick={(e) => onMenuClick(item, e)}
           className={`
-            group flex items-center rounded-xl transition-colors duration-150
+            group flex items-center rounded-xl transition-colors duration-150 relative
             ${isCollapsed ? 'p-3 justify-center' : 'p-3 ml-2'}
             ${active 
               ? 'bg-gradient-purple text-white shadow-lg' 
               : 'text-gray-700 dark:text-gray-300 hover:bg-purple-50 hover:text-purple-700'
             }
+            ${isDisabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}
           `}
           title={isCollapsed ? item.label : ''}
         >
-          <Icon className={`
-            flex-shrink-0 transition-colors duration-150
-            ${isCollapsed ? 'h-6 w-6' : 'h-5 w-5'}
-            ${active ? 'text-white' : 'text-gray-400 group-hover:text-purple-600'}
-          `} />
+          {isLoading ? (
+            <Loader2 className={`
+              flex-shrink-0 animate-spin transition-colors duration-150
+              ${isCollapsed ? 'h-6 w-6' : 'h-5 w-5'}
+              ${active ? 'text-white' : 'text-purple-600'}
+            `} />
+          ) : (
+            <Icon className={`
+              flex-shrink-0 transition-colors duration-150
+              ${isCollapsed ? 'h-6 w-6' : 'h-5 w-5'}
+              ${active ? 'text-white' : 'text-gray-400 group-hover:text-purple-600'}
+            `} />
+          )}
           
           {!isCollapsed && (
             <div className="ml-3 flex-1">
-              <span className="font-medium text-sm">{item.label}</span>
+              <div className="flex items-center space-x-2">
+                <span className="font-medium text-sm">{item.label}</span>
+                {isLoading && (
+                  <span className="text-xs text-purple-600 dark:text-purple-400 font-medium">
+                    Yükleniyor...
+                  </span>
+                )}
+              </div>
               <p className={`text-xs mt-0.5 ${
                 active ? 'text-purple-100' : 'text-gray-500 dark:text-gray-400 group-hover:text-purple-500'
               }`}>
@@ -361,13 +411,13 @@ const Sidebar = () => {
             </div>
           )}
 
-          {!isCollapsed && active && (
+          {!isCollapsed && active && !isLoading && (
             <div className="w-2 h-2 bg-white rounded-full opacity-75"></div>
           )}
         </Link>
       </li>
     );
-  }, []);
+  }, [loadingPath, isNavigating]);
 
   return (
     <>
