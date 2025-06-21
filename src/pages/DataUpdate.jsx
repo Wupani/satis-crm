@@ -35,7 +35,6 @@ const DataUpdate = () => {
     setIsAnalyzing(true);
     
     try {
-      console.log('📊 Mevcut veriler analiz ediliyor...');
       
       // Tüm kullanıcıları çek
       const usersSnapshot = await getDocs(collection(db, 'users'));
@@ -86,7 +85,6 @@ const DataUpdate = () => {
       };
       
       setAnalysisResults(analysis);
-      console.log('✅ Analiz tamamlandı:', analysis);
       
     } catch (error) {
       console.error('Analiz hatası:', error);
@@ -142,7 +140,6 @@ const DataUpdate = () => {
         }
       });
 
-      console.log(`🔄 ${recordsToUpdate.length} kayıt güncellenecek`);
 
       let updatedCount = 0;
       let skippedCount = 0;
@@ -175,7 +172,6 @@ const DataUpdate = () => {
             });
             
             updatedCount++;
-            console.log(`✅ ${record.personel} - ${record.refId} güncellendi`);
           } else {
             skippedCount++;
           }

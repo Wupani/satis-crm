@@ -11,6 +11,19 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
     
+    // Chat sistemi kuralları
+    match /chats/{chatId} {
+      // Chat ID'si kullanıcı ID'lerinden oluşur (user1_user2)
+      allow read, write: if request.auth != null && 
+        (chatId.matches('.*' + request.auth.uid + '.*'));
+      
+      // Mesajlar
+      match /messages/{messageId} {
+        allow read, write: if request.auth != null && 
+          (chatId.matches('.*' + request.auth.uid + '.*'));
+      }
+    }
+    
     // Admin kontrolü gereken koleksiyonlar (gelecekte kullanılabilir)
     match /settings/{document} {
       allow read: if request.auth != null;

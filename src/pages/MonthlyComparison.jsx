@@ -44,8 +44,6 @@ const MonthlyComparison = () => {
   const fetchMonthlyData = async () => {
     setLoading(true);
     try {
-      console.log(`📊 ${selectedYear} yılı aylık verileri yükleniyor...`);
-      
       // Tüm kayıtları çek
       let recordsQuery = collection(db, 'sales_records');
       let allowedUserIds = [];
@@ -54,7 +52,6 @@ const MonthlyComparison = () => {
       if (userRole !== 'admin') {
         if (userRole === 'teamLeader') {
           // Takım lideri ise: kendisi + takım üyeleri
-          console.log('👥 Takım lideri - takım üyelerinin verilerini yüklüyor...');
           
           // Önce tüm kullanıcıları çek
           const usersSnapshot = await getDocs(collection(db, 'users'));
@@ -75,12 +72,9 @@ const MonthlyComparison = () => {
             allowedUserIds.push(member.id);
           });
           
-          console.log(`✅ Takım lideri yetkisi - ${allowedUserIds.length} kullanıcının verisi yüklenecek:`, allowedUserIds);
-          
         } else {
           // Personel ise: sadece kendi kayıtları
           allowedUserIds = [currentUser.uid];
-          console.log('👤 Personel - sadece kendi verileri yükleniyor...');
         }
         
         // Kayıtları filtrele
@@ -107,8 +101,6 @@ const MonthlyComparison = () => {
       const sortedYears = Array.from(years).sort((a, b) => b - a);
       setAvailableYears(sortedYears);
       
-      console.log(`✅ ${allRecords.length} kayıt yüklendi`);
-      
       // Debug: Detay değerlerini kontrol et
       const detayValues = new Set();
       allRecords.forEach(record => {
@@ -116,7 +108,6 @@ const MonthlyComparison = () => {
           detayValues.add(record.detay);
         }
       });
-      console.log('🔍 Bulunan detay değerleri:', Array.from(detayValues));
       
       // Seçili yıla göre filtrele ve aylık grupla
       const monthlyStats = {};
@@ -160,7 +151,6 @@ const MonthlyComparison = () => {
           if (record.detay === 'Satış Sağlandı' || record.detay === 'Satış sağlandı') {
             monthData.sales++;
             totalSales++;
-            console.log(`💰 Satış bulundu: ${record.detay} - ${record.tarih} - ${record.personel}`);
           }
           
           // Durum bazlı sayım (durum alanından)
@@ -207,8 +197,6 @@ const MonthlyComparison = () => {
         conversionRate: totalRecords > 0 ? ((totalSales / totalRecords) * 100).toFixed(1) : 0,
         activePersonnel: personnelSet.size
       });
-      
-      console.log(`📈 ${selectedYear} aylık analiz tamamlandı - Toplam satış: ${totalSales}`);
       
     } catch (error) {
       console.error('Aylık veri yükleme hatası:', error);

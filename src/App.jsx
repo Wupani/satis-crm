@@ -21,6 +21,7 @@ import DataImport from './pages/DataImport';
 import DataUpdate from './components/DataUpdate';
 import UserSwitcher from './pages/UserSwitcher';
 import RoleGuard from './components/RoleGuard';
+import ChatSystem from './components/ChatSystem';
 import './App.css';
 
 // Protected Route Component
@@ -40,6 +41,8 @@ function MainLayout({ children }) {
           {children}
         </main>
       </div>
+      {/* Chat System - Tüm sayfalarda görünür */}
+      <ChatSystem />
     </div>
   );
 }
@@ -378,8 +381,6 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
-
-
         
         {/* Catch all route */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

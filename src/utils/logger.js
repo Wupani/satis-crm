@@ -46,11 +46,6 @@ class Logger {
       userName === 'Admin User' ||
       email.includes('wupaniyazilim@gmail.com')
     ) {
-      // Sadece console'a yazdır, Firebase'e kaydetme
-      if (isDevelopment) {
-        const consoleMethod = this.getConsoleMethod(level);
-        consoleMethod(`[${level.toUpperCase()}] ${category}: ${action} (Admin - Not logged)`, details);
-      }
       return;
     }
 
@@ -67,12 +62,6 @@ class Logger {
         url: window.location.href,
         ip: await this.getClientIP()
       };
-
-      // Console'a da yazdır (development için)
-      if (isDevelopment) {
-        const consoleMethod = this.getConsoleMethod(level);
-        consoleMethod(`[${level.toUpperCase()}] ${category}: ${action}`, details);
-      }
 
       // Firebase'e kaydet
       await addDoc(collection(db, 'system_logs'), logEntry);

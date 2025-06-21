@@ -1,63 +1,104 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { db } from '../auth/firebaseConfig';
-import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { 
+  RefreshCw, 
+  Database, 
+  Shield, 
+  CheckCircle, 
+  AlertCircle,
+  Lock,
+  X
+} from 'lucide-react';
+import { 
+  collection, 
+  getDocs, 
+  updateDoc, 
+  doc
+} from 'firebase/firestore';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../auth/firebaseConfig';
-import { RefreshCw, Database, CheckCircle, AlertCircle, Shield, Lock } from 'lucide-react';
+import { db, auth } from '../auth/firebaseConfig';
 
 const DataUpdate = () => {
   const { currentUser } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [results, setResults] = useState(null);
+  const [updateResults, setUpdateResults] = useState(null);
   const [analysisResults, setAnalysisResults] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  
+  // Modal state'leri
+  const [showDeveloperModal, setShowDeveloperModal] = useState(false);
+  const [developerPassword, setDeveloperPassword] = useState('');
+  const [developerError, setDeveloperError] = useState('');
+  const [pendingAction, setPendingAction] = useState(null); // 'analyze', 'update', 'fixUIDs', 'fixAsli'
   
 
 
   // Geliştirici doğrulama fonksiyonu
   const verifyDeveloper = async () => {
-    const password = prompt('🔒 Bu işlem sadece geliştiriciler yapabilir.\nwupaniyazilim@gmail.com şifresini girin:');
-    
-    if (!password) {
-      return false;
+    if (!developerPassword) {
+      setDeveloperError('❌ Lütfen şifre girin!');
+      return;
     }
 
     try {
-      await signInWithEmailAndPassword(auth, 'wupaniyazilim@gmail.com', password);
-      console.log('✅ Geliştirici doğrulandı');
-      return true;
+      await signInWithEmailAndPassword(auth, 'wupaniyazilim@gmail.com', developerPassword);
+      
+      // Modal'ı kapat
+      setShowDeveloperModal(false);
+      setDeveloperPassword('');
+      setDeveloperError('');
+      
+      // Bekleyen işlemi gerçekleştir
+      if (pendingAction === 'analyze') {
+        analyzeData();
+      } else if (pendingAction === 'update') {
+        updateExistingData();
+      } else if (pendingAction === 'fixUIDs') {
+        fixUserUIDs();
+      } else if (pendingAction === 'fixAsli') {
+        fixAsliRecords();
+      }
+      
+      setPendingAction(null);
+      
     } catch (error) {
-      alert('❌ Geçersiz geliştirici şifresi!');
       console.error('Geliştirici doğrulama hatası:', error);
-      return false;
+      setDeveloperError('❌ Geçersiz geliştirici şifresi!');
     }
   };
 
-  // Korumalı analiz fonksiyonu
-  const handleProtectedAnalyze = async () => {
-    const isVerified = await verifyDeveloper();
-    if (isVerified) {
-      analyzeData();
-    }
+  // Modal kapatma
+  const closeDeveloperModal = () => {
+    setShowDeveloperModal(false);
+    setDeveloperPassword('');
+    setDeveloperError('');
+    setPendingAction(null);
   };
 
-  // Korumalı güncelleme fonksiyonu
-  const handleProtectedUpdate = async () => {
-    const isVerified = await verifyDeveloper();
-    if (isVerified) {
-      updateExistingData();
-    }
+  // Korumalı işlemler
+  const handleProtectedAnalyze = () => {
+    setPendingAction('analyze');
+    setShowDeveloperModal(true);
+  };
+
+  const handleProtectedUpdate = () => {
+    setPendingAction('update');
+    setShowDeveloperModal(true);
+  };
+
+  const handleProtectedFixUIDs = () => {
+    setPendingAction('fixUIDs');
+    setShowDeveloperModal(true);
+  };
+
+  const handleProtectedFixAsli = () => {
+    setPendingAction('fixAsli');
+    setShowDeveloperModal(true);
   };
 
   // Kullanıcıların uid field'ını düzelt
   const fixUserUIDs = async () => {
-    const isVerified = await verifyDeveloper();
-    if (!isVerified) return;
-
     try {
-      console.log('🔧 Kullanici UID leri duzeltiliyor...');
-      
       const usersSnapshot = await getDocs(collection(db, 'users'));
       let fixedCount = 0;
       
@@ -67,10 +108,6 @@ const DataUpdate = () => {
         
         // Eğer uid field'ı yoksa veya document ID ile farklıysa düzelt
         if (!userData.uid || userData.uid !== docId) {
-          console.log(`🔧 Duzeltiliyor: ${userData.name} (${userData.email})`);
-          console.log(`   Eski UID: ${userData.uid || 'undefined'}`);
-          console.log(`   Yeni UID: ${docId}`);
-          
           await updateDoc(doc(db, 'users', docId), {
             uid: docId,
             updatedAt: new Date(),
@@ -81,7 +118,6 @@ const DataUpdate = () => {
         }
       }
       
-      console.log(`✅ ${fixedCount} kullanicinin UID i duzeltildi`);
       alert(`✅ ${fixedCount} kullanicinin UID i duzeltildi!`);
       
     } catch (error) {
@@ -92,12 +128,7 @@ const DataUpdate = () => {
 
   // Aslı Kılıç kayıtlarını manuel düzelt
   const fixAsliRecords = async () => {
-    const isVerified = await verifyDeveloper();
-    if (!isVerified) return;
-
     try {
-      console.log('🔧 Asli Kilic kayitlari duzeltiliyor...');
-      
       // Aslı Kılıç kullanıcısını bul
       const usersSnapshot = await getDocs(collection(db, 'users'));
       let asliUser = null;
@@ -106,7 +137,6 @@ const DataUpdate = () => {
         const userData = doc.data();
         if (userData.name && userData.name.toLowerCase().includes('aslı')) {
           asliUser = userData;
-          console.log(`👤 Asli kullanicisi bulundu: ${userData.name} (${userData.uid})`);
         }
       });
       
@@ -124,8 +154,6 @@ const DataUpdate = () => {
         
         // Aslı ile ilgili kayıtları bul
         if (recordData.personel && recordData.personel.toLowerCase().includes('aslı')) {
-          console.log(`🔧 Duzeltiliyor: ${recordData.personel} - ${recordData.refId}`);
-          
           await updateDoc(doc(db, 'sales_records', recordDoc.id), {
             createdBy: asliUser.uid,
             createdByName: asliUser.name,
@@ -137,7 +165,6 @@ const DataUpdate = () => {
         }
       }
       
-      console.log(`✅ ${fixedCount} Asli kaydi duzeltildi`);
       alert(`✅ ${fixedCount} Aslı Kılıç kaydı düzeltildi!`);
       
     } catch (error) {
@@ -151,35 +178,17 @@ const DataUpdate = () => {
     setIsAnalyzing(true);
     
     try {
-      console.log('📊 Mevcut veriler analiz ediliyor...');
-      
       // Tüm kullanıcıları çek
-      console.log('🔄 Kullanıcılar yükleniyor...');
       const usersSnapshot = await getDocs(collection(db, 'users'));
       const userMap = {};
       
-      console.log(`📊 Toplam ${usersSnapshot.docs.length} kullanıcı dokümanı bulundu`);
-      
       usersSnapshot.forEach(doc => {
         const userData = doc.data();
-        console.log(`👤 Güncelleme - Kullanıcı: "${userData.name}" -> UID: ${userData.uid}`);
         
         if (userData.name) {
           userMap[userData.name] = userData;
-          
-          // Sevde Hocaoğlu için özel kontrol
-          if (userData.name && userData.name.includes('Sevde')) {
-            console.log(`🔍 SEVDE BULUNDU! Tam isim: "${userData.name}"`);
-            console.log(`📧 E-posta: ${userData.email}`);
-            console.log(`🆔 UID: ${userData.uid}`);
-          }
-        } else {
-          console.warn(`⚠️ İsimsiz kullanıcı bulundu:`, userData);
         }
       });
-
-      console.log('👥 Kullanıcı haritası:', Object.keys(userMap));
-      console.log('🔍 Sevde kontrolü:', userMap['Sevde Hocaoğlu'] ? 'BULUNDU' : 'BULUNAMADI');
       
       if (Object.keys(userMap).length === 0) {
         console.error('❌ HİÇBİR KULLANICI YÜKLENEMEDİ!');
@@ -215,8 +224,6 @@ const DataUpdate = () => {
             if (record.createdByName === 'Admin User' || record.createdBy === currentUser.uid) {
               adminRecords++;
             }
-            
-            console.log(`🔧 Yanlış UID: ${record.personel} (${record.createdBy} -> ${correctUser.uid})`);
           } else {
             correctRecords++;
           }
@@ -241,7 +248,6 @@ const DataUpdate = () => {
       };
       
       setAnalysisResults(analysis);
-      console.log('✅ Analiz tamamlandı:', analysis);
       
     } catch (error) {
       console.error('Analiz hatası:', error);
@@ -252,53 +258,18 @@ const DataUpdate = () => {
   };
 
   const updateExistingData = async () => {
-    const confirmUpdate = window.confirm(
-      `🔄 ${analysisResults.fixableRecords} kayıt güncellenecek.\n\n` +
-      'Admin User olarak kayıtlı tüm kayıtlar doğru personellerle eşleştirilecek.\n\n' +
-      'Bu işlem geri alınamaz. Devam etmek istiyor musunuz?'
-    );
-
-    if (!confirmUpdate) return;
-
     setIsProcessing(true);
-    console.log('🔄 Veri güncelleme işlemi başladı');
 
     try {
-      console.log('🔄 Mevcut veriler güncelleniyor...');
-
       // Tüm kullanıcıları çek
-      console.log('🔄 Kullanıcılar yükleniyor...');
       const usersSnapshot = await getDocs(collection(db, 'users'));
       const userMap = {};
       
-      console.log(`📊 Toplam ${usersSnapshot.docs.length} kullanıcı dokümanı bulundu`);
-      
       usersSnapshot.forEach(doc => {
         const userData = doc.data();
-        console.log(`👤 Güncelleme - Kullanıcı: "${userData.name}" -> UID: ${userData.uid}`);
-        
         if (userData.name) {
           userMap[userData.name] = userData;
-          
-          // Sevde Hocaoğlu için özel kontrol
-          if (userData.name && userData.name.includes('Sevde')) {
-            console.log(`🔍 SEVDE BULUNDU! Tam isim: "${userData.name}"`);
-            console.log(`📧 E-posta: ${userData.email}`);
-            console.log(`🆔 UID: ${userData.uid}`);
-          }
-        } else {
-          console.warn(`⚠️ İsimsiz kullanıcı bulundu:`, userData);
         }
-      });
-
-      console.log('👥 Kullanıcı haritası:', Object.keys(userMap));
-      console.log('🔍 Sevde kontrolü:', userMap['Sevde Hocaoğlu'] ? 'BULUNDU' : 'BULUNAMADI');
-      console.log('🔍 Aslı kontrolü:', userMap['Aslı Kılıç'] ? 'BULUNDU' : 'BULUNAMADI');
-      
-      // Tüm kullanıcıları detaylı listele
-      console.log('📋 DETAYLI KULLANICI LİSTESİ:');
-      Object.entries(userMap).forEach(([name, user]) => {
-        console.log(`  👤 "${name}" (${user.email}) -> ${user.uid}`);
       });
       
       if (Object.keys(userMap).length === 0) {
@@ -307,31 +278,12 @@ const DataUpdate = () => {
         return;
       }
 
-      // TÜM kayıtları çek (sadece admin değil)
-      console.log('🔍 Tüm satış kayıtları kontrol ediliyor...');
+      // TÜM kayıtları çek
       const allRecordsSnapshot = await getDocs(collection(db, 'sales_records'));
       const recordsToUpdate = [];
-      const personnelStats = {};
       
       allRecordsSnapshot.forEach(doc => {
         const recordData = doc.data();
-        
-        // Personel istatistikleri
-        if (recordData.personel) {
-          if (!personnelStats[recordData.personel]) {
-            personnelStats[recordData.personel] = { count: 0, uids: new Set() };
-          }
-          personnelStats[recordData.personel].count++;
-          if (recordData.createdBy) {
-            personnelStats[recordData.personel].uids.add(recordData.createdBy);
-          }
-        }
-        
-        // Aslı Kılıç ve Sevde Hocaoğlu kayıtlarını özel olarak logla
-        if (recordData.personel && 
-            (recordData.personel.includes('Aslı') || recordData.personel.includes('Sevde'))) {
-          console.log(`🔍 ${recordData.personel} kaydı: UID=${recordData.createdBy}, REF=${recordData.refId}`);
-        }
         
         // Eğer personel userMap'te varsa ama UID farklıysa güncelle
         if (recordData.personel && userMap[recordData.personel]) {
@@ -341,27 +293,9 @@ const DataUpdate = () => {
           if (recordData.createdBy !== correctUser.uid || 
               recordData.createdByName !== correctUser.name) {
             recordsToUpdate.push({ id: doc.id, ...recordData });
-            console.log(`📝 Güncellenecek: ${recordData.personel} (${recordData.createdBy} -> ${correctUser.uid})`);
           }
         }
       });
-      
-      // Personel istatistiklerini logla
-      console.log('📊 Personel istatistikleri:');
-      Object.entries(personnelStats).forEach(([name, stats]) => {
-        console.log(`👤 ${name}: ${stats.count} kayıt, UID'ler: ${Array.from(stats.uids).join(', ')}`);
-      });
-
-      // Aslı ile ilgili tüm kayıtları bul
-      console.log('🔍 ASLI İLE İLGİLİ TÜM KAYITLAR:');
-      Object.entries(personnelStats).forEach(([name, stats]) => {
-        const lowerName = name.toLowerCase();
-        if (lowerName.includes('asl') || lowerName.includes('kıl') || lowerName.includes('kil')) {
-          console.log(`🔍 ASLI BENZERI KAYIT: "${name}" - ${stats.count} kayıt`);
-        }
-      });
-
-      console.log(`📊 ${recordsToUpdate.length} kayıt güncellenecek`);
 
       if (recordsToUpdate.length === 0) {
         alert('ℹ️ Güncellenecek kayıt bulunamadı!');
@@ -371,7 +305,6 @@ const DataUpdate = () => {
       // Firebase quota koruması için batch size
       const BATCH_SIZE = 50;
       const totalBatches = Math.ceil(recordsToUpdate.length / BATCH_SIZE);
-      console.log(`📦 ${totalBatches} batch'te işlenecek (${BATCH_SIZE} kayıt/batch)`);
 
       let updatedCount = 0;
       let skippedCount = 0;
@@ -382,8 +315,6 @@ const DataUpdate = () => {
         const startIndex = batchIndex * BATCH_SIZE;
         const endIndex = Math.min(startIndex + BATCH_SIZE, recordsToUpdate.length);
         const currentBatch = recordsToUpdate.slice(startIndex, endIndex);
-        
-        console.log(`📦 Batch ${batchIndex + 1}/${totalBatches} işleniyor (${currentBatch.length} kayıt)`);
 
         for (const record of currentBatch) {
           try {
@@ -402,13 +333,10 @@ const DataUpdate = () => {
                     user.name.toLowerCase().includes('hocaoglu')
                   )
                 );
-                if (correctUser) {
-                  console.log(`🔧 Sevde için esnek eşleştirme: "${personelName}" -> "${correctUser.name}"`);
-                }
               }
               
               // Aslı Kılıç için alternatif eşleştirmeler
-              if (personelName.includes('Aslı') || personelName.includes('Kılıç')) {
+              if (!correctUser && (personelName.includes('Aslı') || personelName.includes('Kılıç'))) {
                 correctUser = Object.values(userMap).find(user => 
                   user.name && (
                     user.name.toLowerCase().includes('aslı') ||
@@ -417,29 +345,20 @@ const DataUpdate = () => {
                     user.name.toLowerCase().includes('kilic')
                   )
                 );
-                if (correctUser) {
-                  console.log(`🔧 Aslı için esnek eşleştirme: "${personelName}" -> "${correctUser.name}"`);
-                }
               }
             }
             
-            let finalUser = correctUser;
-            
-            if (finalUser && finalUser.uid) {
-              console.log(`🔄 Güncelleniyor: ${record.personel} - ${record.refId}`);
-              console.log(`🔄 Final User:`, finalUser);
-              console.log(`🔄 Record ID:`, record.id);
-              
+            if (correctUser && correctUser.uid) {
               // Güvenlik kontrolleri
-              if (!finalUser.uid || !finalUser.name) {
-                console.error(`❌ Geçersiz kullanıcı verisi: ${record.personel}`, finalUser);
+              if (!correctUser.uid || !correctUser.name) {
+                console.error(`❌ Geçersiz kullanıcı verisi: ${record.personel}`, correctUser);
                 skippedCount++;
                 continue;
               }
               
               const updateData = {
-                createdBy: finalUser.uid,
-                createdByName: finalUser.name,
+                createdBy: correctUser.uid,
+                createdByName: correctUser.name,
                 updatedAt: new Date(),
                 updatedByAdmin: currentUser.uid,
                 wasImportFixed: true
@@ -451,44 +370,21 @@ const DataUpdate = () => {
                 errors.push(`${record.refId}: Undefined createdBy veya createdByName`);
                 continue;
               }
-
-              console.log(`🔄 Update Data:`, updateData);
               
               try {
                 await updateDoc(doc(db, 'sales_records', record.id), updateData);
                 updatedCount++;
-                console.log(`✅ ${record.personel} - ${record.refId} güncellendi`);
               } catch (updateError) {
                 console.error(`❌ UpdateDoc hatası:`, updateError);
-                console.error(`❌ UpdateDoc hatası - kod:`, updateError.code);
-                console.error(`❌ UpdateDoc hatası - mesaj:`, updateError.message);
                 errors.push(`${record.refId}: UpdateDoc hatası - ${updateError.message}`);
                 skippedCount++;
               }
               
-              // Rate limiting için bekleme (Firebase quota koruması)
+              // Rate limiting için bekleme
               await new Promise(resolve => setTimeout(resolve, 100));
               
             } else {
               skippedCount++;
-              console.log(`⚠️ ${record.personel} - kullanıcı bulunamadı veya geçersiz`);
-              
-              // Detaylı hata ayıklama
-              console.log(`🔍 HATA AYIKLAMA: "${record.personel}"`);
-              console.log(`🔍 Mevcut kullanıcılar:`, Object.keys(userMap));
-              console.log(`🔍 Sevde içeren kullanıcılar:`, Object.keys(userMap).filter(name => name.includes('Sevde')));
-              console.log(`🔍 Aslı içeren kullanıcılar:`, Object.keys(userMap).filter(name => name.includes('Aslı')));
-              console.log(`🔍 Asli içeren kullanıcılar:`, Object.keys(userMap).filter(name => name.toLowerCase().includes('asli')));
-              console.log(`🔍 Kılıç içeren kullanıcılar:`, Object.keys(userMap).filter(name => name.toLowerCase().includes('kılıç')));
-              console.log(`🔍 Kilic içeren kullanıcılar:`, Object.keys(userMap).filter(name => name.toLowerCase().includes('kilic')));
-              
-              // Aslı için özel kontrol
-              if (record.personel.toLowerCase().includes('asl')) {
-                console.log(`🔍 ASLI KAYDI BULUNDU: "${record.personel}"`);
-                console.log(`🔍 UserMap'te Aslı araması:`, Object.keys(userMap).filter(name => 
-                  name.toLowerCase().includes('asl') || name.toLowerCase().includes('kıl')
-                ));
-              }
               
               // Manuel arama dene - hem Sevde hem Aslı için
               let manualMatch = null;
@@ -500,40 +396,19 @@ const DataUpdate = () => {
                   const userName = user.name.toLowerCase().trim();
                   return userName.includes('sevde') || userName.includes('hocaoğlu');
                 });
-                if (manualMatch) {
-                  console.log(`🔧 SEVDE MANUEL EŞLEŞTİRME: "${record.personel}" -> "${manualMatch.name}"`);
-                }
               }
               
-              // Aslı için manuel arama - çok daha esnek
-              if (!manualMatch && (record.personel.toLowerCase().includes('asl') || record.personel.toLowerCase().includes('kıl') || record.personel.toLowerCase().includes('kil'))) {
+              // Aslı için manuel arama
+              if (!manualMatch && (record.personel.toLowerCase().includes('asl') || record.personel.toLowerCase().includes('kıl'))) {
                 manualMatch = Object.values(userMap).find(user => {
                   if (!user.name) return false;
                   const userName = user.name.toLowerCase().trim();
-                  const personelName = record.personel.toLowerCase().trim();
-                  
-                  // Çok esnek eşleştirme
-                  return (
-                    (userName.includes('aslı') || userName.includes('asli')) ||
-                    (userName.includes('kılıç') || userName.includes('kilic') || userName.includes('kiliç')) ||
-                    (personelName.includes('asl') && userName.includes('asl')) ||
-                    (personelName.includes('kıl') && (userName.includes('kıl') || userName.includes('kil')))
-                  );
+                  return userName.includes('aslı') || userName.includes('asli') || 
+                         userName.includes('kılıç') || userName.includes('kilic');
                 });
-                if (manualMatch) {
-                  console.log(`🔧 ASLI MANUEL EŞLEŞTİRME: "${record.personel}" -> "${manualMatch.name}"`);
-                }
               }
               
               if (manualMatch) {
-                console.log(`🔧 MANUEL EŞLEŞTİRME BULUNDU: "${record.personel}" -> "${manualMatch.name}"`);
-                console.log(`🔧 Manuel eşleştirme UID:`, manualMatch.uid);
-                console.log(`🔧 Manuel eşleştirme tam verisi:`, manualMatch);
-                
-                // Manuel eşleştirme bulunduysa kullan
-                finalUser = manualMatch;
-                console.log(`🔄 Manuel eşleştirme ile güncelleme deneniyor...`);
-                
                 try {
                   const updateData = {
                     createdBy: manualMatch.uid,
@@ -544,15 +419,11 @@ const DataUpdate = () => {
                     manualMatchUsed: true
                   };
 
-                  console.log(`🔄 Update data hazırlandı:`, updateData);
                   await updateDoc(doc(db, 'sales_records', record.id), updateData);
-                  
                   updatedCount++;
-                  console.log(`✅ MANUEL EŞLEŞTİRME İLE GÜNCELLENDİ: ${record.personel} - ${record.refId}`);
                   
                   // Rate limiting için bekleme
                   await new Promise(resolve => setTimeout(resolve, 100));
-                  continue; // Döngünün başına dön
                   
                 } catch (manualUpdateError) {
                   console.error(`❌ Manuel güncelleme hatası:`, manualUpdateError);
@@ -567,15 +438,13 @@ const DataUpdate = () => {
             
             // Rate limit hatası durumunda dur
             if (recordError.code === 'resource-exhausted') {
-              console.log('⏸️ Firebase quota aşıldı, işlem durduruluyor');
               break;
             }
           }
         }
         
-        // Batch'ler arası bekleme (Firebase quota koruması)
+        // Batch'ler arası bekleme
         if (batchIndex < totalBatches - 1) {
-          console.log(`⏸️ Batch ${batchIndex + 1} tamamlandı, 1 saniye bekleniyor...`);
           await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
@@ -588,8 +457,7 @@ const DataUpdate = () => {
         errorDetails: errors.slice(0, 10)
       };
 
-      console.log('📊 Güncelleme sonuçları:', updateResults);
-      setResults(updateResults);
+      setUpdateResults(updateResults);
 
       // Success message
       alert(
@@ -607,7 +475,6 @@ const DataUpdate = () => {
     } finally {
       // Her durumda loading state'ini kapat
       setIsProcessing(false);
-      console.log('🔄 Veri güncelleme işlemi tamamlandı');
     }
   };
 
@@ -661,7 +528,7 @@ const DataUpdate = () => {
                 <div>
                   <p className="text-sm text-gray-500 mb-2">Eğer kullanıcı UID problemi varsa:</p>
                   <button
-                    onClick={fixUserUIDs}
+                    onClick={handleProtectedFixUIDs}
                     className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2 mx-auto text-sm"
                   >
                     <Shield className="w-4 h-4" />
@@ -672,7 +539,7 @@ const DataUpdate = () => {
                 <div>
                   <p className="text-sm text-gray-500 mb-2">Aslı Kılıç kayıtları düzeltilmiyorsa:</p>
                   <button
-                    onClick={fixAsliRecords}
+                    onClick={handleProtectedFixAsli}
                     className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2 mx-auto text-sm"
                   >
                     <Shield className="w-4 h-4" />
@@ -730,7 +597,7 @@ const DataUpdate = () => {
             2. Veri Güncelleme
           </h2>
           
-          {!isProcessing && !results ? (
+          {!isProcessing && !updateResults ? (
             <div className="space-y-4">
               <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                 <div className="flex items-start">
@@ -761,35 +628,13 @@ const DataUpdate = () => {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
               <p className="text-gray-600 text-lg font-medium">Veriler güncelleniyor...</p>
               <p className="text-gray-500 text-sm mt-2">Lütfen bekleyin, bu işlem birkaç dakika sürebilir</p>
-              
-              {/* Debug bilgileri */}
-              <div className="mt-6 text-left bg-gray-50 rounded-lg p-4 max-w-md mx-auto">
-                <h4 className="font-medium text-gray-700 mb-2">🔍 İşlem Durumu:</h4>
-                <div className="text-sm text-gray-600 space-y-1">
-                  <div className="flex items-center">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                    Firebase bağlantısı kuruldu
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2 animate-pulse"></div>
-                    Kayıtlar güncelleniyor...
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-2 h-2 bg-gray-300 rounded-full mr-2"></div>
-                    Sonuçlar gösterilecek
-                  </div>
-                </div>
-                <p className="text-xs text-gray-500 mt-3">
-                  Console'u açarak detayları görebilirsiniz (F12)
-                </p>
-              </div>
             </div>
           ) : null}
         </div>
       )}
 
       {/* Results Section */}
-      {results && (
+      {updateResults && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
             <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
@@ -798,19 +643,19 @@ const DataUpdate = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             <div className="bg-blue-50 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-blue-600">{results.total}</div>
+              <div className="text-2xl font-bold text-blue-600">{updateResults.total}</div>
               <div className="text-sm text-blue-700">Toplam İşlenen</div>
             </div>
             <div className="bg-green-50 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-green-600">{results.updated}</div>
+              <div className="text-2xl font-bold text-green-600">{updateResults.updated}</div>
               <div className="text-sm text-green-700">Güncellendi</div>
             </div>
             <div className="bg-yellow-50 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-yellow-600">{results.skipped}</div>
+              <div className="text-2xl font-bold text-yellow-600">{updateResults.skipped}</div>
               <div className="text-sm text-yellow-700">Atlandı</div>
             </div>
             <div className="bg-red-50 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-red-600">{results.errors}</div>
+              <div className="text-2xl font-bold text-red-600">{updateResults.errors}</div>
               <div className="text-sm text-red-700">Hata</div>
             </div>
           </div>
@@ -824,6 +669,78 @@ const DataUpdate = () => {
                   Artık Dashboard'da "Zirveye Adını Yazdıranlar" bölümünde doğru personeller görünecek.
                   Sayfayı yenileyerek kontrol edebilirsiniz.
                 </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Geliştirici Doğrulama Modalı */}
+      {showDeveloperModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <Shield className="w-5 h-5 text-red-600" />
+                <h3 className="text-lg font-semibold text-gray-900">Geliştirici Doğrulaması</h3>
+              </div>
+              <button
+                onClick={closeDeveloperModal}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <div className="mb-4">
+                <div className="flex items-center space-x-2 mb-2">
+                  <Lock className="w-4 h-4 text-red-600" />
+                  <p className="text-sm text-gray-700">
+                    Bu işlem sadece geliştiriciler tarafından yapılabilir.
+                  </p>
+                </div>
+                <p className="text-xs text-gray-500">
+                  wupaniyazilim@gmail.com hesabının şifresini girin.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Geliştirici Şifresi
+                  </label>
+                  <input
+                    type="password"
+                    value={developerPassword}
+                    onChange={(e) => setDeveloperPassword(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    placeholder="Geliştirici şifresini girin"
+                    onKeyPress={(e) => e.key === 'Enter' && verifyDeveloper()}
+                  />
+                </div>
+
+                {developerError && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                    <p className="text-sm text-red-700">{developerError}</p>
+                  </div>
+                )}
+
+                <div className="flex space-x-3">
+                  <button
+                    onClick={closeDeveloperModal}
+                    className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    İptal
+                  </button>
+                  <button
+                    onClick={verifyDeveloper}
+                    disabled={!developerPassword}
+                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Doğrula
+                  </button>
+                </div>
               </div>
             </div>
           </div>

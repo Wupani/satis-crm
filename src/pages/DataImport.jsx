@@ -84,7 +84,6 @@ const DataImport = () => {
         setPreviewData(previewFormatted);
         setShowPreview(true);
         
-        console.log(`📊 ${jsonData.length} satır veri yüklendi`);
         
       } catch (error) {
         console.error('Excel okuma hatası:', error);
@@ -184,7 +183,6 @@ const DataImport = () => {
 
     try {
       // Tüm kullanıcıları bir kere çek (performans için)
-      console.log('👥 Kullanıcılar yükleniyor...');
       const personnelUsers = await getDocs(collection(db, 'users'));
       const userMap = {};
       
@@ -193,7 +191,6 @@ const DataImport = () => {
         userMap[userData.name] = userData;
       });
       
-      console.log(`✅ ${Object.keys(userMap).length} kullanıcı yüklendi`);
 
       for (let i = 0; i < excelData.length; i++) {
         // Duraklama kontrolü

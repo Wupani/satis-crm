@@ -266,7 +266,9 @@ const UserManagement = () => {
         name: formData.name,
         role: formData.role,
         createdAt: new Date(),
-        isActive: true
+        isActive: true,
+        isOnline: false,
+        lastSeen: new Date()
       });
       
       // Kullanıcı oluşturma işlemini logla

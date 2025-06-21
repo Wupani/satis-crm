@@ -27,12 +27,13 @@ export const AuthProvider = ({ children }) => {
     if (!currentUser) return;
 
     const checkSessionTimeout = () => {
+      if (!currentUser || !sessionTimeout || !lastActivity) return;
+
       const now = Date.now();
       const timeSinceLastActivity = now - lastActivity;
-      const timeoutMs = sessionTimeout * 60 * 1000; // dakikayı milisaniyeye çevir
+      const timeoutMs = sessionTimeout * 60 * 1000;
 
       if (timeSinceLastActivity >= timeoutMs) {
-        console.log('⏰ Oturum zaman aşımına uğradı, kullanıcı çıkış yapılıyor...');
         handleSessionTimeout();
       }
     };
@@ -69,22 +70,15 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const loadSystemSettings = async () => {
       try {
-        console.log('🔧 Sistem ayarları yükleniyor...');
         const settingsDoc = await getDoc(doc(db, 'system_settings', 'main'));
         if (settingsDoc.exists()) {
           const settings = settingsDoc.data();
           if (settings.security?.sessionTimeout) {
             setSessionTimeout(settings.security.sessionTimeout);
-            console.log(`✅ Oturum zaman aşımı ayarı yüklendi: ${settings.security.sessionTimeout} dakika`);
-          } else {
-            console.log('⚠️ Sistem ayarlarında sessionTimeout bulunamadı, varsayılan değer kullanılıyor: 480 dakika');
           }
-        } else {
-          console.log('⚠️ Sistem ayarları dokümanı bulunamadı, varsayılan değer kullanılıyor: 480 dakika');
         }
       } catch (error) {
-        console.error('❌ Sistem ayarları yüklenirken hata:', error);
-        console.log('🔄 Varsayılan değer kullanılıyor: 480 dakika');
+        console.error('Sistem ayarları yüklenirken hata:', error);
       }
     };
 

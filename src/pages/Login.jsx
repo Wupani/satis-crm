@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogIn, Eye, EyeOff, Mail, Lock, AlertCircle, Send, X } from 'lucide-react';
+import { LogIn, Eye, EyeOff, Mail, Lock, AlertCircle } from 'lucide-react';
 import logger from '../utils/logger';
 
 const Login = () => {
@@ -11,13 +11,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   
-  // Reset password modal states
-  const [showResetModal, setShowResetModal] = useState(false);
-  const [resetEmail, setResetEmail] = useState('');
-  const [resetLoading, setResetLoading] = useState(false);
-  const [resetSuccess, setResetSuccess] = useState(false);
-
-  const { login, resetPassword } = useAuth();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,37 +67,7 @@ const Login = () => {
     setLoading(false);
   };
 
-  const handlePasswordReset = async (e) => {
-    e.preventDefault();
-    
-    if (!resetEmail) {
-      setError('Lütfen e-posta adresinizi girin');
-      return;
-    }
 
-    try {
-      setError('');
-      setResetLoading(true);
-      await resetPassword(resetEmail);
-      setResetSuccess(true);
-    } catch (error) {
-      console.error('Şifre sıfırlama hatası:', error);
-      if (error.code === 'auth/user-not-found') {
-        setError('Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı.');
-      } else {
-        setError('Şifre sıfırlama e-postası gönderilirken hata oluştu.');
-      }
-    }
-    setResetLoading(false);
-  };
-
-  const closeResetModal = () => {
-    setShowResetModal(false);
-    setResetEmail('');
-    setError('');
-    setResetSuccess(false);
-    setResetLoading(false);
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-lavender-50 to-periwinkle-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4 relative overflow-hidden">
@@ -172,26 +136,16 @@ const Login = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-purple-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 font-medium">
-                  Beni hatırla
-                </label>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setShowResetModal(true)}
-                className="text-sm font-semibold text-purple-600 hover:text-purple-700 transition-colors"
-              >
-                Şifremi unuttum
-              </button>
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-purple-300 rounded"
+              />
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 font-medium">
+                Beni hatırla
+              </label>
             </div>
 
             <button
@@ -212,100 +166,7 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Password Reset Modal */}
-      {showResetModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="card-modern p-6 w-full max-w-md relative">
-            <button
-              onClick={closeResetModal}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
 
-            {!resetSuccess ? (
-              <>
-                <div className="text-center mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3">
-                    <Send className="h-6 w-6 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Şifre Sıfırlama</h3>
-                  <p className="text-sm text-gray-600">
-                    E-posta adresinizi girin, size şifre sıfırlama bağlantısı gönderelim.
-                  </p>
-                </div>
-
-                {error && (
-                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center space-x-2">
-                    <AlertCircle className="h-4 w-4 text-red-500 flex-shrink-0" />
-                    <span className="text-red-700 text-sm">{error}</span>
-                  </div>
-                )}
-
-                <form onSubmit={handlePasswordReset} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      E-posta Adresi
-                    </label>
-                    <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input
-                        type="email"
-                        value={resetEmail}
-                        onChange={(e) => setResetEmail(e.target.value)}
-                        className="input-modern pl-16"
-                        placeholder=""
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex space-x-3">
-                    <button
-                      type="button"
-                      onClick={closeResetModal}
-                      className="btn-secondary flex-1"
-                    >
-                      İptal
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={resetLoading}
-                      className="btn-primary flex-1 flex items-center justify-center space-x-2"
-                    >
-                      {resetLoading ? (
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full spin-smooth"></div>
-                      ) : (
-                        <>
-                          <Send className="h-4 w-4" />
-                          <span>Gönder</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </form>
-              </>
-            ) : (
-              <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <Send className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">E-posta Gönderildi!</h3>
-                <p className="text-sm text-gray-600 mb-6">
-                  Şifre sıfırlama bağlantısı e-posta adresinize gönderildi. 
-                  Lütfen e-postanızı kontrol edin.
-                </p>
-                <button
-                  onClick={closeResetModal}
-                  className="btn-primary w-full"
-                >
-                  Tamam
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 };

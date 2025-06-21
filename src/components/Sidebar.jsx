@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback, memo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import logger from '../utils/logger';
@@ -33,8 +33,8 @@ const Sidebar = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState(new Set(['Genel'])); // Anasayfa kategorisi default açık
 
-  // Define navigation items based on user role
-  const getNavigationItems = () => {
+  // Memoize navigation items to prevent recalculation on every render
+  const navigationCategories = useMemo(() => {
     const roleSpecificCategories = {
       admin: [
         {
@@ -256,38 +256,41 @@ const Sidebar = () => {
     };
 
     return roleSpecificCategories[currentUser?.role] || roleSpecificCategories.personnel;
-  };
-
-  const navigationCategories = getNavigationItems();
+  }, [currentUser?.role]);
 
   const isActive = (path) => location.pathname === path;
 
-  const handleMenuClick = async (item) => {
-    // Menu tıklamasını logla
-    if (currentUser && currentUser.uid !== 'wupaniyazilim@gmail.com') {
-      try {
-        await logger.logSidebarMenuClick(
-          currentUser.uid,
-          currentUser.name || currentUser.email?.split('@')[0] || 'Kullanıcı',
-          item.label,
-          item.path
-        );
-      } catch (error) {
-        console.error('Menu click log hatası:', error);
-      }
-    }
+  const handleMenuClick = useCallback(async (item) => {
+    // Önce UI'ı güncelle (hızlı)
     setIsMobileOpen(false);
-  };
+    
+    // Logging'i arka planda yap (non-blocking)
+    if (currentUser && currentUser.uid !== 'wupaniyazilim@gmail.com') {
+      // setTimeout ile async işlemi arka plana at
+      setTimeout(async () => {
+        try {
+          await logger.logSidebarMenuClick(
+            currentUser.uid,
+            currentUser.name || currentUser.email?.split('@')[0] || 'Kullanıcı',
+            item.label,
+            item.path
+          );
+        } catch (error) {
+          console.error('Menu click log hatası:', error);
+        }
+      }, 0);
+    }
+  }, [currentUser]);
 
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
+  const toggleSidebar = useCallback(() => {
+    setIsCollapsed(prev => !prev);
+  }, []);
 
-  const toggleMobileSidebar = () => {
-    setIsMobileOpen(!isMobileOpen);
-  };
+  const toggleMobileSidebar = useCallback(() => {
+    setIsMobileOpen(prev => !prev);
+  }, []);
 
-  const toggleCategory = (categoryTitle) => {
+  const toggleCategory = useCallback((categoryTitle) => {
     if (isCollapsed) return; // Collapsed modda kategoriler açılmasın
     
     setExpandedCategories(prev => {
@@ -299,18 +302,79 @@ const Sidebar = () => {
       }
       return newExpanded;
     });
-  };
+  }, [isCollapsed]);
 
-  const isCategoryExpanded = (categoryTitle) => {
+  const isCategoryExpanded = useCallback((categoryTitle) => {
     return isCollapsed || expandedCategories.has(categoryTitle);
-  };
+  }, [isCollapsed, expandedCategories]);
+
+  // Optimize edilmiş CategoryHeader component
+  const CategoryHeader = useCallback(({ category, isExpanded, onToggle }) => (
+    <button
+      onClick={() => onToggle(category.title)}
+      className="w-full flex items-center justify-between p-2 text-left hover:bg-purple-50 rounded-lg transition-colors duration-150"
+    >
+      <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+        {category.title}
+      </h3>
+      {isExpanded ? (
+        <ChevronUp className="h-4 w-4 text-gray-400" />
+      ) : (
+        <ChevronDown className="h-4 w-4 text-gray-400" />
+      )}
+    </button>
+  ), []);
+
+  // Optimize edilmiş MenuItem component
+  const MenuItem = useCallback(({ item, isCollapsed, active, onMenuClick }) => {
+    const Icon = item.icon;
+    
+    return (
+      <li>
+        <Link
+          to={item.path}
+          onClick={() => onMenuClick(item)}
+          className={`
+            group flex items-center rounded-xl transition-colors duration-150
+            ${isCollapsed ? 'p-3 justify-center' : 'p-3 ml-2'}
+            ${active 
+              ? 'bg-gradient-purple text-white shadow-lg' 
+              : 'text-gray-700 dark:text-gray-300 hover:bg-purple-50 hover:text-purple-700'
+            }
+          `}
+          title={isCollapsed ? item.label : ''}
+        >
+          <Icon className={`
+            flex-shrink-0 transition-colors duration-150
+            ${isCollapsed ? 'h-6 w-6' : 'h-5 w-5'}
+            ${active ? 'text-white' : 'text-gray-400 group-hover:text-purple-600'}
+          `} />
+          
+          {!isCollapsed && (
+            <div className="ml-3 flex-1">
+              <span className="font-medium text-sm">{item.label}</span>
+              <p className={`text-xs mt-0.5 ${
+                active ? 'text-purple-100' : 'text-gray-500 dark:text-gray-400 group-hover:text-purple-500'
+              }`}>
+                {item.description}
+              </p>
+            </div>
+          )}
+
+          {!isCollapsed && active && (
+            <div className="w-2 h-2 bg-white rounded-full opacity-75"></div>
+          )}
+        </Link>
+      </li>
+    );
+  }, []);
 
   return (
     <>
       {/* Mobile Menu Toggle Button */}
       <button
         onClick={toggleMobileSidebar}
-        className="lg:hidden fixed top-20 left-4 z-50 p-2 bg-gradient-purple text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+        className="lg:hidden fixed top-20 left-4 z-50 p-2 bg-gradient-purple text-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-200"
       >
         {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>
@@ -326,7 +390,7 @@ const Sidebar = () => {
       {/* Sidebar */}
       <aside className={`
         fixed lg:relative top-0 left-0 z-40 h-full bg-white dark:bg-gray-800 border-r border-purple-100 dark:border-gray-700 shadow-modern
-        transition-all duration-300 ease-in-out
+        transition-transform duration-200 ease-out transform-gpu
         ${isCollapsed ? 'w-20' : 'w-72'}
         ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
@@ -356,14 +420,14 @@ const Sidebar = () => {
             {/* Desktop Collapse Button */}
             <button
               onClick={toggleSidebar}
-              className="hidden lg:flex p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-all duration-300 icon-hover"
+              className="hidden lg:flex p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-colors duration-200 icon-hover"
             >
               {isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
             </button>
           </div>
 
           {/* Navigation Menu */}
-          <nav className="flex-1 py-6 overflow-y-auto">
+          <nav className="flex-1 py-6 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-200 scrollbar-track-transparent hover:scrollbar-thumb-purple-300">
             <div className={`space-y-2 ${isCollapsed ? 'px-3' : 'px-6'}`}>
               {navigationCategories.map((category, categoryIndex) => {
                 const isExpanded = isCategoryExpanded(category.title);
@@ -372,67 +436,19 @@ const Sidebar = () => {
                   <div key={categoryIndex} className="mb-2">
                     {/* Category Header */}
                     {!isCollapsed ? (
-                      <button
-                        onClick={() => toggleCategory(category.title)}
-                        className="w-full flex items-center justify-between p-2 text-left hover:bg-purple-50 rounded-lg transition-colors duration-200"
-                      >
-                        <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                          {category.title}
-                        </h3>
-                        {isExpanded ? (
-                          <ChevronUp className="h-4 w-4 text-gray-400" />
-                        ) : (
-                          <ChevronDown className="h-4 w-4 text-gray-400" />
-                        )}
-                      </button>
+                      <CategoryHeader category={category} isExpanded={isExpanded} onToggle={toggleCategory} />
                     ) : null}
                     
                     {/* Category Items */}
-                    <div className={`overflow-hidden transition-all duration-300 ${
+                    <div className={`overflow-hidden transition-all duration-200 will-change-transform transform-gpu ${
                       isExpanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                     } ${!isCollapsed ? 'mt-1' : ''}`}>
                       <ul className="space-y-1">
                         {category.items.map((item) => {
-                          const Icon = item.icon;
                           const active = isActive(item.path);
                           
                           return (
-                            <li key={item.path}>
-                              <Link
-                                to={item.path}
-                                onClick={() => handleMenuClick(item)}
-                                className={`
-                                  group flex items-center rounded-xl transition-all duration-300 transform hover:-translate-y-0.5
-                                  ${isCollapsed ? 'p-3 justify-center' : 'p-3 ml-2'}
-                                  ${active 
-                                    ? 'bg-gradient-purple text-white shadow-lg' 
-                                    : 'text-gray-700 dark:text-gray-300 hover:bg-purple-50 hover:text-purple-700'
-                                  }
-                                `}
-                                title={isCollapsed ? item.label : ''}
-                              >
-                                <Icon className={`
-                                  flex-shrink-0 transition-all duration-300
-                                  ${isCollapsed ? 'h-6 w-6' : 'h-5 w-5'}
-                                  ${active ? 'text-white' : 'text-gray-400 group-hover:text-purple-600'}
-                                `} />
-                                
-                                {!isCollapsed && (
-                                  <div className="ml-3 flex-1">
-                                    <span className="font-medium text-sm">{item.label}</span>
-                                                                    <p className={`text-xs mt-0.5 ${
-                                  active ? 'text-purple-100' : 'text-gray-500 dark:text-gray-400 group-hover:text-purple-500'
-                                }`}>
-                                      {item.description}
-                                    </p>
-                                  </div>
-                                )}
-
-                                {!isCollapsed && active && (
-                                  <div className="w-2 h-2 bg-white rounded-full opacity-75"></div>
-                                )}
-                              </Link>
-                            </li>
+                            <MenuItem key={item.path} item={item} isCollapsed={isCollapsed} active={active} onMenuClick={handleMenuClick} />
                           );
                         })}
                       </ul>
@@ -462,4 +478,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar; 
+export default memo(Sidebar); 
