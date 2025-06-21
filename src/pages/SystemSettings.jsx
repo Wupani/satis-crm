@@ -366,7 +366,7 @@ const SystemSettings = () => {
           </div>
           <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700">
             <span className="text-gray-600 dark:text-gray-400">Uygulama Versiyonu:</span>
-            <span className="font-medium text-gray-900 dark:text-white">v1.3.0</span>
+            <span className="font-medium text-gray-900 dark:text-white">v1.2.0</span>
           </div>
           <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700">
             <span className="text-gray-600 dark:text-gray-400">Son Güncelleme:</span>

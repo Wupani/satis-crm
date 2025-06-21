@@ -122,11 +122,7 @@ const MonthlyComparison = () => {
           monthName: monthNames[month],
           totalRecords: 0,
           sales: 0,
-          arandi: 0,
-          mesgul: 0,
           ulasilamadi: 0,
-          geriArama: 0,
-          reddetti: 0,
           other: 0,
           conversionRate: 0,
           personnel: new Set(),
@@ -158,20 +154,8 @@ const MonthlyComparison = () => {
           monthData.statusBreakdown[status] = (monthData.statusBreakdown[status] || 0) + 1;
           
           switch (status) {
-            case 'Arandı':
-              monthData.arandi++;
-              break;
-            case 'Meşgul':
-              monthData.mesgul++;
-              break;
             case 'Ulaşılamadı':
               monthData.ulasilamadi++;
-              break;
-            case 'Geri Arama':
-              monthData.geriArama++;
-              break;
-            case 'Reddetti':
-              monthData.reddetti++;
               break;
             default:
               monthData.other++;
@@ -207,18 +191,14 @@ const MonthlyComparison = () => {
 
   // CSV Export fonksiyonu
   const exportToCSV = () => {
-    const headers = ['Ay', 'Toplam Kayıt', 'Satış', 'Arandı', 'Meşgul', 'Ulaşılamadı', 'Geri Arama', 'Reddetti', 'Dönüşüm Oranı', 'Aktif Personel'];
+    const headers = ['Ay', 'Toplam Kayıt', 'Satış', 'Ulaşılamadı', 'Dönüşüm Oranı', 'Aktif Personel'];
     const csvContent = [
       headers.join(','),
       ...monthlyData.map(month => [
         month.monthName,
         month.totalRecords,
         month.sales,
-        month.arandi,
-        month.mesgul,
         month.ulasilamadi,
-        month.geriArama,
-        month.reddetti,
         `${month.conversionRate}%`,
         month.personnelCount
       ].join(','))
@@ -349,12 +329,6 @@ const MonthlyComparison = () => {
                       Satış
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Arandı
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Meşgul
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                       Ulaşılamadı
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -398,16 +372,6 @@ const MonthlyComparison = () => {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
                             {month.sales}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
-                            {month.arandi}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300">
-                            {month.mesgul}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
