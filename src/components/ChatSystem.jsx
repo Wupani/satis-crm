@@ -22,7 +22,8 @@ import {
   Maximize2,
   Search,
   CheckCheck,
-  Check
+  Check,
+  Circle
 } from 'lucide-react';
 
 const ChatSystem = () => {
@@ -37,32 +38,49 @@ const ChatSystem = () => {
   const [unreadCounts, setUnreadCounts] = useState({});
   const [totalUnreadCount, setTotalUnreadCount] = useState(0);
   const [typingUsers] = useState({});
+  const [onlineUsers, setOnlineUsers] = useState(new Set());
+  const [userStatuses, setUserStatuses] = useState({});
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Kullanıcıları getir
+  // Kullanıcıları ve online durumlarını dinle
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const usersQuery = query(
-          collection(db, 'users'),
-          where('isActive', '==', true)
-        );
-        const usersSnapshot = await getDocs(usersQuery);
-        const usersList = usersSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })).filter(user => user.id !== currentUser?.uid);
-        
-        setUsers(usersList);
-      } catch (error) {
-        console.error('Kullanıcılar getirilemedi:', error);
-      }
-    };
+    if (!currentUser) return;
 
-    if (currentUser) {
-      fetchUsers();
-    }
+    const usersQuery = query(
+      collection(db, 'users'),
+      where('isActive', '==', true)
+    );
+
+    const unsubscribe = onSnapshot(usersQuery, (snapshot) => {
+      const usersList = [];
+      const onlineSet = new Set();
+      const statusMap = {};
+      
+      snapshot.docs.forEach(doc => {
+        const userData = { id: doc.id, ...doc.data() };
+        if (userData.id !== currentUser?.uid) {
+          usersList.push(userData);
+          
+          // Online durumu kontrolü
+          if (userData.isOnline) {
+            onlineSet.add(userData.id);
+          }
+          
+          // Kullanıcı durumu bilgilerini kaydet
+          statusMap[userData.id] = {
+            isOnline: userData.isOnline || false,
+            lastSeen: userData.lastSeen
+          };
+        }
+      });
+      
+      setUsers(usersList);
+      setOnlineUsers(onlineSet);
+      setUserStatuses(statusMap);
+    });
+
+    return () => unsubscribe();
   }, [currentUser]);
 
   // Online kullanıcıları takip et
@@ -83,6 +101,11 @@ const ChatSystem = () => {
 
     updateOnlineStatus(true);
 
+    // Periyodik olarak online durumunu güncelle (her 30 saniyede bir)
+    const onlineInterval = setInterval(() => {
+      updateOnlineStatus(true);
+    }, 30000);
+
     // Bildirim izni iste
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission();
@@ -90,13 +113,42 @@ const ChatSystem = () => {
 
     // Sayfa kapatılırken offline yap
     const handleBeforeUnload = () => updateOnlineStatus(false);
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        updateOnlineStatus(false);
+      } else {
+        updateOnlineStatus(true);
+      }
+    };
+
     window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
+      clearInterval(onlineInterval);
       updateOnlineStatus(false);
       window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [currentUser]);
+
+  // Son görülme zamanını formatla
+  const formatLastSeen = (lastSeen) => {
+    if (!lastSeen) return 'Hiç görülmedi';
+    
+    const date = lastSeen.toDate();
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Az önce görüldü';
+    if (diffMins < 60) return `${diffMins} dakika önce görüldü`;
+    if (diffHours < 24) return `${diffHours} saat önce görüldü`;
+    if (diffDays < 7) return `${diffDays} gün önce görüldü`;
+    return date.toLocaleDateString('tr-TR') + ' tarihinde görüldü';
+  };
 
   // Tüm chatlerden okunmamış mesajları dinle
   useEffect(() => {
@@ -140,7 +192,7 @@ const ChatSystem = () => {
           if (newMessages.length > 0) {
             const lastMessage = newMessages[newMessages.length - 1].data();
             new Notification(`${unreadCount} okunmamış mesajınız var`, {
-              body: `${user.name || user.email}: ${lastMessage.text}`,
+              body: `${user.name || user.email?.split('@')[0]}: ${lastMessage.text}`,
               icon: '/vite.svg',
               tag: `chat-${user.id}`,
               requireInteraction: false
@@ -263,8 +315,6 @@ const ChatSystem = () => {
     return nameA.localeCompare(nameB);
   });
 
-
-
   // Typing indicator'ı göster
   const showTypingIndicator = activeChat && typingUsers[activeChat.id];
 
@@ -324,6 +374,18 @@ const ChatSystem = () => {
                     </span>
                   )}
                 </h3>
+                {/* Aktif sohbette online durumu göster */}
+                {activeChat && (
+                  <div className="flex items-center space-x-1 mt-1">
+                    <Circle className={`h-2 w-2 ${
+                      onlineUsers.has(activeChat.id) ? 'text-green-400 fill-current' : 'text-gray-300 fill-current'
+                    }`} />
+                    <span className="text-xs text-purple-100">
+                      {onlineUsers.has(activeChat.id) ? 'Çevrimiçi' : 
+                       userStatuses[activeChat.id]?.lastSeen ? formatLastSeen(userStatuses[activeChat.id].lastSeen) : 'Çevrimdışı'}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
             
@@ -363,45 +425,71 @@ const ChatSystem = () => {
 
                   {/* Users */}
                   <div className="space-y-2 max-h-80 overflow-y-auto">
-                    {sortedUsers.map(user => (
-                      <button
-                        key={user.id}
-                        onClick={() => startChat(user)}
-                        className="w-full flex items-center space-x-3 p-3 hover:bg-purple-50 dark:hover:bg-gray-700 rounded-lg transition-colors text-left"
-                      >
-                        <div className="relative">
-                          <div className="w-10 h-10 bg-gradient-purple rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                            {(user.name || user.email?.split('@')[0] || 'U')[0].toUpperCase()}
-                          </div>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-2">
-                              <p className="font-medium text-sm text-gray-900 dark:text-white truncate">
-                                {user.name || user.email?.split('@')[0]}
-                              </p>
-                              {/* Yetki rozeti */}
-                              <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
-                                (user.role === 'admin' || user.role === 'Admin')
-                                  ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' 
-                                  : (user.role === 'teamLeader' || user.role === 'Team Leader')
-                                  ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                                  : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                              }`}>
-                                {(user.role === 'admin' || user.role === 'Admin') ? 'Yönetici' : 
-                                 (user.role === 'teamLeader' || user.role === 'Team Leader') ? 'Takım Lideri' : 'Personel'}
-                              </span>
+                    {sortedUsers.map(user => {
+                      const isOnline = onlineUsers.has(user.id);
+                      const userStatus = userStatuses[user.id];
+                      
+                      return (
+                        <button
+                          key={user.id}
+                          onClick={() => startChat(user)}
+                          className="w-full flex items-center space-x-3 p-3 hover:bg-purple-50 dark:hover:bg-gray-700 rounded-lg transition-colors text-left"
+                        >
+                          <div className="relative">
+                            <div className="w-10 h-10 bg-gradient-purple rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                              {(user.name || user.email?.split('@')[0] || 'U')[0].toUpperCase()}
                             </div>
-                            {/* Okunmamış mesaj sayısı */}
-                            {unreadCounts[user.id] > 0 && (
-                              <div className="w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                                {unreadCounts[user.id]}
-                              </div>
-                            )}
+                            {/* Online durumu göstergesi */}
+                            <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
+                              isOnline ? 'bg-green-500' : 'bg-gray-400'
+                            }`}></div>
                           </div>
-                        </div>
-                      </button>
-                    ))}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-2">
+                                <div className="flex flex-col items-start">
+                                  <div className="flex items-center space-x-2">
+                                    <p className="font-medium text-sm text-gray-900 dark:text-white truncate">
+                                      {user.name || user.email?.split('@')[0]}
+                                    </p>
+                                    {/* Online durum metni */}
+                                    <Circle className={`h-2 w-2 ${isOnline ? 'text-green-500 fill-current' : 'text-gray-400 fill-current'}`} />
+                                  </div>
+                                  {/* Son görülme zamanı */}
+                                  {!isOnline && userStatus?.lastSeen && (
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                      {formatLastSeen(userStatus.lastSeen)}
+                                    </p>
+                                  )}
+                                  {isOnline && (
+                                    <p className="text-xs text-green-600 dark:text-green-400">
+                                      Çevrimiçi
+                                    </p>
+                                  )}
+                                </div>
+                                {/* Yetki rozeti */}
+                                <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
+                                  (user.role === 'admin' || user.role === 'Admin')
+                                    ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' 
+                                    : (user.role === 'teamLeader' || user.role === 'Team Leader')
+                                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                                    : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                }`}>
+                                  {(user.role === 'admin' || user.role === 'Admin') ? 'Yönetici' : 
+                                   (user.role === 'teamLeader' || user.role === 'Team Leader') ? 'Takım Lideri' : 'Personel'}
+                                </span>
+                              </div>
+                              {/* Okunmamış mesaj sayısı */}
+                              {unreadCounts[user.id] > 0 && (
+                                <div className="w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                                  {unreadCounts[user.id]}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
