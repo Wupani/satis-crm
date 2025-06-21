@@ -8,6 +8,7 @@ import Analytics from './pages/Analytics';
 import MonthlyComparison from './pages/MonthlyComparison';
 import TeamPerformance from './pages/TeamPerformance';
 import DuplicateNumbers from './pages/DuplicateNumbers';
+import PersonnelDevelopment from './pages/PersonnelDevelopment';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import RecordForm from './components/RecordForm';
@@ -38,8 +39,10 @@ function MainLayout({ children }) {
       <Navbar />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
-        <main className="flex-1 overflow-y-auto bg-transparent">
-          {children}
+        <main className="flex-1 overflow-y-auto bg-transparent px-2 sm:px-4 lg:px-6">
+          <div className="max-w-full">
+            {children}
+          </div>
         </main>
       </div>
       {/* Chat System - Tüm sayfalarda görünür */}
@@ -89,7 +92,7 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <MainLayout>
-            <div className="p-6">
+            <div className="p-2 sm:p-4 lg:p-6">
                   <RecordTable />
               </div>
               </MainLayout>
@@ -101,7 +104,7 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <MainLayout>
-                <div className="p-6">
+                <div className="p-2 sm:p-4 lg:p-6">
                   <RecordForm />
             </div>
               </MainLayout>
@@ -114,7 +117,7 @@ function AppContent() {
             <ProtectedRoute>
               <MainLayout>
                 <RoleGuard allowedRoles={['admin']}>
-            <div className="p-6">
+            <div className="p-2 sm:p-4 lg:p-6">
               <UserManagement />
             </div>
           </RoleGuard>
@@ -128,7 +131,7 @@ function AppContent() {
             <ProtectedRoute>
               <MainLayout>
                 <RoleGuard allowedRoles={['admin']}>
-                  <div className="p-6">
+                  <div className="p-2 sm:p-4 lg:p-6">
                     <UserSwitcher />
                   </div>
                 </RoleGuard>
@@ -142,7 +145,7 @@ function AppContent() {
             <ProtectedRoute>
               <MainLayout>
                 <RoleGuard allowedRoles={['admin', 'teamLeader']}>
-                  <div className="p-6">
+                  <div className="p-2 sm:p-4 lg:p-6">
                     <TargetManagement />
                   </div>
                 </RoleGuard>
@@ -156,7 +159,7 @@ function AppContent() {
             <ProtectedRoute>
               <MainLayout>
                 <RoleGuard allowedRoles={['admin']}>
-                  <div className="p-6">
+                  <div className="p-2 sm:p-4 lg:p-6">
                     <TeamManagement />
                   </div>
                 </RoleGuard>
@@ -182,7 +185,7 @@ function AppContent() {
             <ProtectedRoute>
               <MainLayout>
                 <RoleGuard allowedRoles={['admin']}>
-                  <div className="p-6">
+                  <div className="p-2 sm:p-4 lg:p-6">
                     <DataImport />
                   </div>
                 </RoleGuard>
@@ -196,7 +199,7 @@ function AppContent() {
             <ProtectedRoute>
               <MainLayout>
                 <RoleGuard allowedRoles={['admin']}>
-                  <div className="p-6">
+                  <div className="p-2 sm:p-4 lg:p-6">
                     <DataUpdate />
                   </div>
                 </RoleGuard>
@@ -210,7 +213,7 @@ function AppContent() {
             <ProtectedRoute>
               <MainLayout>
                 <RoleGuard allowedRoles={['admin']}>
-                  <div className="p-6">
+                  <div className="p-2 sm:p-4 lg:p-6">
                     <div className="max-w-4xl mx-auto">
                       <div className="card-modern p-8">
                         <div className="text-center">
@@ -221,7 +224,7 @@ function AppContent() {
                           </div>
                           <h2 className="text-3xl font-bold text-gradient-purple mb-4">Veri Dışa Aktarma</h2>
                           <p className="text-xl text-gray-600 mb-8">Verileri Excel formatında dışa aktarın</p>
-                          <div className="bg-gradient-periwinkle p-6 rounded-2xl">
+                          <div className="bg-gradient-periwinkle p-2 sm:p-4 lg:p-6 rounded-2xl">
                             <p className="text-gray-700 font-medium">Veri dışa aktarma özelliği geliştirme aşamasında...</p>
                             <p className="text-sm text-gray-500 mt-2">Excel formatında veri dışa aktarım araçları yakında eklenecek.</p>
                           </div>
@@ -240,7 +243,7 @@ function AppContent() {
             <ProtectedRoute>
               <MainLayout>
                 <RoleGuard allowedRoles={['admin']}>
-                  <div className="p-6">
+                  <div className="p-2 sm:p-4 lg:p-6">
                     <div className="max-w-4xl mx-auto">
                       <div className="card-modern p-8">
                         <div className="text-center">
@@ -251,7 +254,7 @@ function AppContent() {
                           </div>
                           <h2 className="text-3xl font-bold text-gradient-purple mb-4">Veritabanı Yönetimi</h2>
                           <p className="text-xl text-gray-600 mb-8">Veri yedekleme ve bakım işlemleri</p>
-                          <div className="bg-gradient-periwinkle p-6 rounded-2xl">
+                          <div className="bg-gradient-periwinkle p-2 sm:p-4 lg:p-6 rounded-2xl">
                             <p className="text-gray-700 font-medium">Veritabanı yönetim araçları geliştirme aşamasında...</p>
                             <p className="text-sm text-gray-500 mt-2">Veri yedekleme, geri yükleme ve bakım araçları yakında eklenecek.</p>
                           </div>
@@ -299,12 +302,24 @@ function AppContent() {
           }
         />
         <Route
+          path="/personnel-development"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <RoleGuard allowedRoles={['admin', 'teamLeader']}>
+                  <PersonnelDevelopment />
+                </RoleGuard>
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/monthly-comparison"
           element={
             <ProtectedRoute>
               <MainLayout>
                 <RoleGuard allowedRoles={['admin', 'teamLeader']}>
-                  <div className="p-6">
+                  <div className="p-2 sm:p-4 lg:p-6">
                     <MonthlyComparison />
                   </div>
                 </RoleGuard>
@@ -340,7 +355,7 @@ function AppContent() {
             <ProtectedRoute>
               <MainLayout>
                 <RoleGuard allowedRoles={['teamLeader', 'personnel']}>
-                  <div className="p-6">
+                  <div className="p-2 sm:p-4 lg:p-6">
                     <div className="max-w-6xl mx-auto">
                       <div className="card-modern p-8">
                         <div className="text-center">
@@ -351,7 +366,7 @@ function AppContent() {
                           </div>
                           <h2 className="text-3xl font-bold text-gradient-purple mb-4">Hedefler</h2>
                           <p className="text-xl text-gray-600 mb-8">Hedef takibi ve ilerleme yönetimi</p>
-                          <div className="bg-gradient-periwinkle p-6 rounded-2xl">
+                          <div className="bg-gradient-periwinkle p-2 sm:p-4 lg:p-6 rounded-2xl">
                             <p className="text-gray-700 font-medium">Hedef yönetimi sayfası geliştirme aşamasında...</p>
                             <p className="text-sm text-gray-500 mt-2">Satış hedefleri, takip ve raporlama araçları yakında eklenecek.</p>
                           </div>
@@ -370,7 +385,7 @@ function AppContent() {
             <ProtectedRoute>
               <MainLayout>
                 <RoleGuard allowedRoles={['teamLeader']}>
-                  <div className="p-6">
+                  <div className="p-2 sm:p-4 lg:p-6">
                     <div className="max-w-6xl mx-auto">
                       <div className="card-modern p-8">
                         <div className="text-center">
@@ -381,7 +396,7 @@ function AppContent() {
                           </div>
                           <h2 className="text-3xl font-bold text-gradient-purple mb-4">Raporlar</h2>
                           <p className="text-xl text-gray-600 mb-8">Takım raporları ve analitik veriler</p>
-                          <div className="bg-gradient-periwinkle p-6 rounded-2xl">
+                          <div className="bg-gradient-periwinkle p-2 sm:p-4 lg:p-6 rounded-2xl">
                             <p className="text-gray-700 font-medium">Raporlama sistemi geliştirme aşamasında...</p>
                             <p className="text-sm text-gray-500 mt-2">Detaylı takım raporları ve analitik araçları yakında eklenecek.</p>
                           </div>

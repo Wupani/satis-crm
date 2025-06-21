@@ -70,7 +70,7 @@ const Login = () => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-lavender-50 to-periwinkle-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-lavender-50 to-periwinkle-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-3 sm:p-4 relative overflow-hidden">
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-purple-200 to-purple-300 rounded-full opacity-20 float-animation"></div>
@@ -80,25 +80,25 @@ const Login = () => {
 
       <div className="w-full max-w-lg mx-auto">
         {/* Login Form */}
-        <div className="card-modern p-10 shadow-modern-hover">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-purple rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <LogIn className="h-8 w-8 text-white" />
+        <div className="card-modern p-6 sm:p-8 lg:p-10 shadow-modern-hover">
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-purple rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg">
+              <LogIn className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-gradient-purple mb-2">Hoş Geldiniz</h2>
-            <p className="text-gray-600 font-medium">Hesabınıza giriş yapın</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gradient-purple mb-1 sm:mb-2">Hoş Geldiniz</h2>
+            <p className="text-sm sm:text-base text-gray-600 font-medium">Hesabınıza giriş yapın</p>
           </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center space-x-3 animate-pulse">
-              <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
-              <span className="text-red-700 text-sm font-medium">{error}</span>
+            <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg sm:rounded-xl flex items-center space-x-2 sm:space-x-3 animate-pulse">
+              <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-500 flex-shrink-0" />
+              <span className="text-red-700 text-xs sm:text-sm font-medium">{error}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
                 E-posta Adresi
               </label>
               <div className="relative">
@@ -106,7 +106,7 @@ const Login = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="input-modern"
+                  className="input-modern text-sm sm:text-base"
                   placeholder=""
                   required
                 />
@@ -114,7 +114,7 @@ const Login = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
                 Şifre
               </label>
               <div className="relative">
@@ -122,16 +122,16 @@ const Login = () => {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="input-modern pr-12"
+                  className="input-modern pr-10 sm:pr-12 text-sm sm:text-base"
                   placeholder=""
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-purple-600 transition-colors"
+                  className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-purple-600 transition-colors"
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <Eye className="h-4 w-4 sm:h-5 sm:w-5" />}
                 </button>
               </div>
             </div>
@@ -141,9 +141,9 @@ const Login = () => {
                 id="remember-me"
                 name="remember-me"
                 type="checkbox"
-                className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-purple-300 rounded"
+                className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-600 focus:ring-purple-500 border-purple-300 rounded"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 font-medium">
+              <label htmlFor="remember-me" className="ml-2 block text-xs sm:text-sm text-gray-700 font-medium">
                 Beni hatırla
               </label>
             </div>
@@ -151,13 +151,13 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full flex items-center justify-center space-x-2"
+              className="btn-primary w-full flex items-center justify-center space-x-2 text-sm sm:text-base py-2.5 sm:py-3"
             >
               {loading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full spin-smooth"></div>
+                <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full spin-smooth"></div>
               ) : (
                 <>
-                  <LogIn className="h-5 w-5" />
+                  <LogIn className="h-4 w-4 sm:h-5 sm:w-5" />
                   <span>Giriş Yap</span>
                 </>
               )}

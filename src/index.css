@@ -291,7 +291,8 @@ html.dark {
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .btn-primary, .btn-secondary, .btn-danger, .btn-success {
-    @apply px-4 py-2 text-sm;
+    @apply px-3 py-2 text-sm;
+    min-height: 44px; /* iOS touch target minimum */
   }
   
   .card-modern, .card-glass {
@@ -299,7 +300,62 @@ html.dark {
   }
   
   .input-modern {
-    @apply px-3 py-3 text-sm;
+    @apply px-3 py-2.5 text-sm;
+    min-height: 44px; /* iOS touch target minimum */
+  }
+  
+  /* Mobile table improvements */
+  .table-modern th,
+  .table-modern td {
+    @apply px-2 py-2 text-xs;
+  }
+  
+  /* Mobile spacing adjustments */
+  .space-y-8 > * + * {
+    @apply mt-4;
+  }
+  
+  .space-y-6 > * + * {
+    @apply mt-3;
+  }
+  
+  /* Mobile font size adjustments */
+  h1 {
+    @apply text-xl;
+  }
+  
+  h2 {
+    @apply text-lg;
+  }
+  
+  h3 {
+    @apply text-base;
+  }
+  
+  /* Touch improvements */
+  button, a, input, select {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  
+  /* Prevent zoom on input focus */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .btn-primary, .btn-secondary, .btn-danger, .btn-success {
+    @apply px-2 py-1.5 text-xs;
+  }
+  
+  .input-modern {
+    @apply px-2 py-2 text-xs;
+  }
+  
+  .card-modern, .card-glass {
+    @apply rounded-lg p-3;
   }
 }
 

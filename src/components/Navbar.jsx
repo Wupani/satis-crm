@@ -75,34 +75,34 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white dark:bg-gray-800 shadow-modern border-b border-purple-100 dark:border-gray-700 sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <nav className="bg-white dark:bg-gray-800 shadow-modern border-b border-purple-100 dark:border-gray-700 sticky top-0 z-[55]">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
+        <div className="flex justify-between items-center h-14 sm:h-16">
           {/* Desktop Navigation */}
-          <div className="flex items-center space-x-6 ml-auto">
+          <div className="hidden md:flex items-center space-x-4 sm:space-x-6 ml-auto">
             {/* Theme Toggle */}
             <button
               onClick={toggleDarkMode}
-              className="p-2 text-gray-400 hover:text-purple-600 rounded-xl hover:bg-purple-50 transition-all duration-300 icon-hover"
+              className="p-1.5 sm:p-2 text-gray-400 hover:text-purple-600 rounded-lg sm:rounded-xl hover:bg-purple-50 transition-all duration-300 icon-hover"
               title={darkMode ? 'Açık temaya geç' : 'Koyu temaya geç'}
             >
-              {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              {darkMode ? <Sun className="h-4 w-4 sm:h-5 sm:w-5" /> : <Moon className="h-4 w-4 sm:h-5 sm:w-5" />}
             </button>
 
             {/* User Menu */}
             <div className="relative">
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center space-x-3 p-2 rounded-xl hover:bg-purple-50 transition-all duration-300 group"
+                className="flex items-center space-x-2 sm:space-x-3 p-1.5 sm:p-2 rounded-lg sm:rounded-xl hover:bg-purple-50 transition-all duration-300 group"
               >
-                <div className="w-8 h-8 bg-gradient-purple rounded-lg flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
-                  <User className="h-4 w-4 text-white" />
+                <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-purple rounded-lg flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
+                  <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
                 </div>
                 <div className="hidden lg:block text-left">
                   <p className="text-sm font-semibold text-gray-900">{userName || currentUser?.name || 'Kullanıcı'}</p>
                   <p className="text-xs text-gray-500">{currentUser?.email}</p>
                 </div>
-                <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`h-3.5 w-3.5 sm:h-4 sm:w-4 text-gray-400 transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''}`} />
               </button>
 
               {/* User Dropdown Menu */}
@@ -177,27 +177,38 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center space-x-2">
+            {/* Mobile Theme Toggle */}
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 text-gray-400 hover:text-purple-600 rounded-lg hover:bg-purple-50 transition-all duration-300 touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center"
+              title={darkMode ? 'Açık temaya geç' : 'Koyu temaya geç'}
+              style={{ WebkitTapHighlightColor: 'transparent' }}
+            >
+              {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </button>
+            
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-gray-400 hover:text-purple-600 rounded-xl hover:bg-purple-50 transition-all duration-300"
+              className="p-2 text-gray-400 hover:text-purple-600 rounded-lg hover:bg-purple-50 transition-all duration-300 touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center"
+              style={{ WebkitTapHighlightColor: 'transparent' }}
             >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-purple-100 py-4 space-y-4">
+          <div className="md:hidden border-t border-purple-100 py-3 space-y-3">
             {/* User Info Mobile */}
-            <div className="flex items-center space-x-3 px-2">
+            <div className="flex items-center space-x-3 px-3">
               <div className="w-10 h-10 bg-gradient-purple rounded-xl flex items-center justify-center shadow-lg">
                 <User className="h-5 w-5 text-white" />
               </div>
               <div>
-                <p className="font-semibold text-gray-900">{userName || currentUser?.name || 'Kullanıcı'}</p>
-                <p className="text-sm text-gray-500">{currentUser?.email}</p>
+                <p className="font-semibold text-gray-900 text-sm">{userName || currentUser?.name || 'Kullanıcı'}</p>
+                <p className="text-xs text-gray-500">{currentUser?.email}</p>
                 <div className="flex items-center space-x-2">
                   <span className={`${getRoleBadgeColor(userRole)} text-xs`}>
                     <Shield className="h-3 w-3 mr-1" />

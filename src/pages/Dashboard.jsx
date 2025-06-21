@@ -348,7 +348,7 @@ const Dashboard = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-lavender-50 to-periwinkle-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full spin-smooth mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full spin-smooth mx-auto mb-3"></div>
           <p className="text-gray-600 font-medium">Veriler yükleniyor...</p>
         </div>
       </div>
@@ -356,30 +356,31 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-lavender-50 to-periwinkle-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-lavender-50 to-periwinkle-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-2 sm:p-4 lg:p-6">
+      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 lg:space-y-8">
         {/* Welcome Header */}
-        <div className="card-modern p-8 bg-gradient-lavender">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-gradient-purple rounded-2xl flex items-center justify-center shadow-lg">
-                <UserCheck className="h-8 w-8 text-white" />
+        <div className="card-modern p-4 sm:p-6 lg:p-8 bg-gradient-lavender">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-purple rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg">
+                <UserCheck className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold text-gradient-purple">
+                <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold text-gradient-purple">
                   Hoş Geldiniz, {userName || 'Kullanıcı'}! 👋
                 </h1>
-                <p className="text-xl text-gray-600 dark:text-gray-300 font-medium mt-2">
-                  Satış Takip CRM - <strong>{new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</strong> günü özeti
+                <p className="text-sm sm:text-base lg:text-xl text-gray-600 dark:text-gray-300 font-medium mt-1 sm:mt-2">
+                  Satış Takip CRM - <strong className="hidden sm:inline">{new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</strong>
+                  <span className="sm:hidden">{new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}</span> günü özeti
                 </p>
-                <div className="flex items-center space-x-4 mt-3">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
-                    <Briefcase className="h-4 w-4 mr-1" />
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 sm:mt-3">
+                  <span className="inline-flex items-center px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-medium bg-purple-100 text-purple-800">
+                    <Briefcase className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                     {currentUser?.role === 'admin' ? 'Yönetici' : 
                      currentUser?.role === 'teamLeader' ? 'Takım Lideri' : 'Personel'}
                   </span>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                    <Activity className="h-4 w-4 mr-1" />
+                  <span className="inline-flex items-center px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-medium bg-green-100 text-green-800">
+                    <Activity className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                     Aktif
                   </span>
                 </div>
@@ -392,11 +393,11 @@ const Dashboard = () => {
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <div className="card-modern p-6 hover:scale-105 transition-transform duration-300">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                <BarChart3 className="h-6 w-6 text-white" />
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                <BarChart3 className="h-5 w-5 text-white" />
               </div>
               <div className="flex items-center space-x-1 text-sm font-semibold text-green-600">
                 <ArrowUp className="h-4 w-4" />
@@ -414,9 +415,9 @@ const Dashboard = () => {
           </div>
 
           <div className="card-modern p-6 hover:scale-105 transition-transform duration-300">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
-                <CheckCircle className="h-6 w-6 text-white" />
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center shadow-lg">
+                <CheckCircle className="h-5 w-5 text-white" />
               </div>
               <div className="flex items-center space-x-1 text-sm font-semibold text-green-600">
                 <ArrowUp className="h-4 w-4" />
@@ -435,232 +436,254 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="card-modern p-8">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-              <Zap className="h-5 w-5 text-white" />
+        <div className="card-modern p-4 sm:p-6 lg:p-8">
+          <div className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+              <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Hızlı İşlemler</h2>
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100">Hızlı İşlemler</h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
             {/* Herkes için ortak işlemler */}
             <button
               onClick={() => navigate('/records')}
-              className="group text-left p-6 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+              className="group text-left p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
             >
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                  <Eye className="h-6 w-6 text-white" />
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                  <Eye className="h-5 w-5 text-white" />
                 </div>
-                <ArrowUp className="h-5 w-5 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
+                <ArrowUp className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-purple-700 transition-colors">
+              <h3 className="text-sm sm:text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-purple-700 transition-colors">
                 Kayıtları Görüntüle
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors">
+              <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors hidden sm:block">
                 Tüm satış kayıtlarını listele ve filtrele
               </p>
             </button>
 
             <button
               onClick={() => navigate('/add-record')}
-              className="group text-left p-6 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+              className="group text-left p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
             >
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                  <Plus className="h-6 w-6 text-white" />
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                  <Plus className="h-5 w-5 text-white" />
                 </div>
-                <ArrowUp className="h-5 w-5 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
+                <ArrowUp className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-purple-700 transition-colors">
+              <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-purple-700 transition-colors">
                 Yeni Kayıt Ekle
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors">
+              <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors hidden sm:block">
                 Hızlı satış kaydı oluştur
               </p>
             </button>
 
-            {/* Admin için özel işlemler */}
+            {/* Admin için özel işlemler - Mantıklı sıralama */}
             {currentUser?.role === 'admin' && (
               <>
+                {/* 1. Analitik ve Raporlar */}
                 <button
                   onClick={() => navigate('/analytics')}
-                  className="group text-left p-6 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  className="group text-left p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                      <PieChart className="h-6 w-6 text-white" />
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                      <PieChart className="h-5 w-5 text-white" />
                     </div>
-                    <ArrowUp className="h-5 w-5 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
+                    <ArrowUp className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-purple-700 transition-colors">
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-purple-700 transition-colors">
                     Analitik Dashboard
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors hidden sm:block">
                     Detaylı raporlar ve analizler
                   </p>
                 </button>
 
                 <button
-                  onClick={() => navigate('/user-management')}
-                  className="group text-left p-6 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  onClick={() => navigate('/personnel-development')}
+                  className="group text-left p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                      <Users className="h-6 w-6 text-white" />
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-rose-500 to-rose-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                      <UserPlus className="h-5 w-5 text-white" />
                     </div>
-                    <ArrowUp className="h-5 w-5 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
+                    <ArrowUp className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-purple-700 transition-colors">
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-purple-700 transition-colors">
+                    Personel Gelişimi
+                  </h3>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors hidden sm:block">
+                    Personel analizi ve gelişim önerileri
+                  </p>
+                </button>
+
+                <button
+                  onClick={() => navigate('/monthly-comparison')}
+                  className="group text-left p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-teal-500 to-teal-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                      <BarChart2 className="h-5 w-5 text-white" />
+                    </div>
+                    <ArrowUp className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
+                  </div>
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-purple-700 transition-colors">
+                    Aylık Karşılaştırma
+                  </h3>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors hidden sm:block">
+                    Aylık performans karşılaştırması
+                  </p>
+                </button>
+
+                <button
+                  onClick={() => navigate('/duplicate-numbers')}
+                  className="group text-left p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                      <Search className="h-5 w-5 text-white" />
+                    </div>
+                    <ArrowUp className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
+                  </div>
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-purple-700 transition-colors">
+                    Mükerrer Analizi
+                  </h3>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors hidden sm:block">
+                    Tekrar aranan numaraları analiz et
+                  </p>
+                </button>
+
+                {/* 2. Kullanıcı ve Takım Yönetimi */}
+                <button
+                  onClick={() => navigate('/user-management')}
+                  className="group text-left p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                      <Users className="h-5 w-5 text-white" />
+                    </div>
+                    <ArrowUp className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
+                  </div>
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-purple-700 transition-colors">
                     Kullanıcı Yönetimi
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors hidden sm:block">
                     Personel ekle, düzenle ve yönet
                   </p>
                 </button>
 
                 <button
                   onClick={() => navigate('/team-management')}
-                  className="group text-left p-6 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  className="group text-left p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                      <UserPlus className="h-6 w-6 text-white" />
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                      <TrendingUp className="h-5 w-5 text-white" />
                     </div>
-                    <ArrowUp className="h-5 w-5 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
+                    <ArrowUp className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-purple-700 transition-colors">
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-purple-700 transition-colors">
                     Takım Yönetimi
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors hidden sm:block">
                     Takım liderleri ve ekip yönetimi
                   </p>
                 </button>
 
                 <button
                   onClick={() => navigate('/target-management')}
-                  className="group text-left p-6 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  className="group text-left p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                      <Target className="h-6 w-6 text-white" />
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                      <Target className="h-5 w-5 text-white" />
                     </div>
-                    <ArrowUp className="h-5 w-5 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
+                    <ArrowUp className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-purple-700 transition-colors">
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-purple-700 transition-colors">
                     Hedef Yönetimi
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors hidden sm:block">
                     Personel hedefleri belirle ve takip et
                   </p>
                 </button>
 
                 <button
-                  onClick={() => navigate('/duplicate-numbers')}
-                  className="group text-left p-6 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  onClick={() => navigate('/user-switcher')}
+                  className="group text-left p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                      <Search className="h-6 w-6 text-white" />
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                      <UserCheck className="h-5 w-5 text-white" />
                     </div>
-                    <ArrowUp className="h-5 w-5 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
+                    <ArrowUp className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-purple-700 transition-colors">
-                    Mükerrer Analizi
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-purple-700 transition-colors">
+                    Hesap Geçişi
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors">
-                    Tekrar aranan numaraları analiz et
+                  <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors hidden sm:block">
+                    Başka kullanıcı hesabına geçiş yap
                   </p>
                 </button>
 
+                {/* 3. Veri Yönetimi */}
                 <button
-                  onClick={() => navigate('/monthly-comparison')}
-                  className="group text-left p-6 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  onClick={() => navigate('/data-import')}
+                  className="group text-left p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                      <BarChart2 className="h-6 w-6 text-white" />
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                      <Database className="h-5 w-5 text-white" />
                     </div>
-                    <ArrowUp className="h-5 w-5 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
+                    <ArrowUp className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-purple-700 transition-colors">
-                    Aylık Karşılaştırma
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-purple-700 transition-colors">
+                    Veri İçe Aktarma
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors">
-                    Aylık performans karşılaştırması
+                  <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors hidden sm:block">
+                    Excel dosyalarından toplu veri yükle
                   </p>
                 </button>
 
+                {/* 4. Sistem Yönetimi */}
                 <button
                   onClick={() => navigate('/system-settings')}
-                  className="group text-left p-6 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  className="group text-left p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-gray-500 to-gray-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                      <Settings className="h-6 w-6 text-white" />
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-gray-500 to-gray-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                      <Settings className="h-5 w-5 text-white" />
                     </div>
-                    <ArrowUp className="h-5 w-5 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
+                    <ArrowUp className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-purple-700 transition-colors">
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-purple-700 transition-colors">
                     Sistem Ayarları
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors hidden sm:block">
                     Genel sistem konfigürasyonu
                   </p>
                 </button>
 
                 <button
                   onClick={() => navigate('/system-logs')}
-                  className="group text-left p-6 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  className="group text-left p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                      <Shield className="h-6 w-6 text-white" />
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                      <Shield className="h-5 w-5 text-white" />
                     </div>
-                    <ArrowUp className="h-5 w-5 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
+                    <ArrowUp className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-purple-700 transition-colors">
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-purple-700 transition-colors">
                     Sistem Logları
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors hidden sm:block">
                     Güvenlik ve sistem kayıtları
-                  </p>
-                </button>
-
-                <button
-                  onClick={() => navigate('/data-import')}
-                  className="group text-left p-6 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                      <Database className="h-6 w-6 text-white" />
-                    </div>
-                    <ArrowUp className="h-5 w-5 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-purple-700 transition-colors">
-                    Veri İçe Aktarma
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors">
-                    Excel dosyalarından toplu veri yükle
-                  </p>
-                </button>
-
-                <button
-                  onClick={() => navigate('/user-switcher')}
-                  className="group text-left p-6 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                      <UserCheck className="h-6 w-6 text-white" />
-                    </div>
-                    <ArrowUp className="h-5 w-5 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-purple-700 transition-colors">
-                    Hesap Geçişi
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors">
-                    Başka kullanıcı hesabına geçiş yap
                   </p>
                 </button>
               </>
@@ -671,134 +694,114 @@ const Dashboard = () => {
               <>
                 <button
                   onClick={() => navigate('/analytics')}
-                  className="group text-left p-6 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  className="group text-left p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                      <PieChart className="h-6 w-6 text-white" />
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                      <PieChart className="h-5 w-5 text-white" />
                     </div>
-                    <ArrowUp className="h-5 w-5 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
+                    <ArrowUp className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-purple-700 transition-colors">
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-purple-700 transition-colors">
                     Analitik Raporları
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors hidden sm:block">
                     Takım performans analizleri
                   </p>
                 </button>
 
                 <button
-                  onClick={() => navigate('/team-performance')}
-                  className="group text-left p-6 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  onClick={() => navigate('/personnel-development')}
+                  className="group text-left p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                      <TrendingUp className="h-6 w-6 text-white" />
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-rose-500 to-rose-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                      <UserPlus className="h-5 w-5 text-white" />
                     </div>
-                    <ArrowUp className="h-5 w-5 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
+                    <ArrowUp className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-purple-700 transition-colors">
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-purple-700 transition-colors">
+                    Takım Gelişimi
+                  </h3>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors hidden sm:block">
+                    Takım üyelerinin gelişim analizi
+                  </p>
+                </button>
+
+                <button
+                  onClick={() => navigate('/team-performance')}
+                  className="group text-left p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                      <TrendingUp className="h-5 w-5 text-white" />
+                    </div>
+                    <ArrowUp className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
+                  </div>
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-purple-700 transition-colors">
                     Takım Performansı
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors hidden sm:block">
                     Ekip üyelerinin detaylı analizi
                   </p>
                 </button>
 
                 <button
-                  onClick={() => navigate('/duplicate-numbers')}
-                  className="group text-left p-6 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                      <Search className="h-6 w-6 text-white" />
-                    </div>
-                    <ArrowUp className="h-5 w-5 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-purple-700 transition-colors">
-                    Mükerrer Analizi
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors">
-                    Takım mükerrer numara analizi
-                  </p>
-                </button>
-
-                <button
                   onClick={() => navigate('/monthly-comparison')}
-                  className="group text-left p-6 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  className="group text-left p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                      <BarChart2 className="h-6 w-6 text-white" />
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-teal-500 to-teal-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                      <BarChart2 className="h-5 w-5 text-white" />
                     </div>
-                    <ArrowUp className="h-5 w-5 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
+                    <ArrowUp className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-purple-700 transition-colors">
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-purple-700 transition-colors">
                     Aylık Karşılaştırma
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors">
+                  <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors hidden sm:block">
                     Takım aylık performans raporu
                   </p>
                 </button>
 
+                <button
+                  onClick={() => navigate('/duplicate-numbers')}
+                  className="group text-left p-4 rounded-xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                      <Search className="h-5 w-5 text-white" />
+                    </div>
+                    <ArrowUp className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
+                  </div>
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-purple-700 transition-colors">
+                    Mükerrer Analizi
+                  </h3>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors hidden sm:block">
+                    Takım mükerrer numara analizi
+                  </p>
+                </button>
 
               </>
             )}
 
-            {/* Personel için temel işlemler */}
-            {currentUser?.role === 'personnel' && (
-              <>
-                <button
-                  onClick={() => navigate('/analytics')}
-                  className="group text-left p-6 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                      <PieChart className="h-6 w-6 text-white" />
-                    </div>
-                    <ArrowUp className="h-5 w-5 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-purple-700 transition-colors">
-                    Performansım
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors">
-                    Kişisel performans raporları
-                  </p>
-                </button>
-
-                <button
-                  onClick={() => navigate('/monthly-comparison')}
-                  className="group text-left p-6 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                      <Calendar className="h-6 w-6 text-white" />
-                    </div>
-                    <ArrowUp className="h-5 w-5 text-gray-400 group-hover:text-purple-600 transform group-hover:-translate-y-1 transition-all duration-300" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-purple-700 transition-colors">
-                    Aylık Gelişimim
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 transition-colors">
-                    Aylık performans karşılaştırması
-                  </p>
-                </button>
-              </>
-            )}
+            {/* Personel için temel işlemler - Sadece ortak işlemler kullanılır */}
           </div>
         </div>
 
         {/* Top Performers - Zirveye Adını Yazdıranlar */}
-        <div className="card-modern p-8">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center">
-              <Trophy className="h-5 w-5 text-white" />
+        <div className="card-modern p-4 sm:p-6 lg:p-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 mb-4 sm:mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center">
+                <Trophy className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+              </div>
+              <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-gray-100">Zirveye Adını Yazdıranlar</h2>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Zirveye Adını Yazdıranlar</h2>
-            <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Bu Ay En İyi 3 Satışçı</span>
+            <span className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-1 sm:px-3 sm:py-1 rounded-full">Bu Ay En İyi 3 Satışçı</span>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {topPerformers.length > 0 ? (
               topPerformers.map((performer, index) => {
                 const positions = [
@@ -837,7 +840,7 @@ const Dashboard = () => {
                     className={`relative p-6 rounded-2xl border-2 ${position.borderColor} bg-gradient-to-br ${position.bgGradient} shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}
                   >
                     <div className="text-center">
-                      <div className={`w-16 h-16 ${position.iconBg} rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg`}>
+                      <div className={`w-16 h-16 ${position.iconBg} rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg`}>
                         <Icon className="h-8 w-8 text-white" />
                       </div>
                       
@@ -869,7 +872,7 @@ const Dashboard = () => {
               })
             ) : (
               <div className="col-span-3 text-center py-8">
-                <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-3">
                   <Trophy className="h-8 w-8 text-gray-400" />
                 </div>
                 <p className="text-gray-500 font-medium">Bu ay henüz satış verisi bulunmuyor</p>
@@ -883,7 +886,7 @@ const Dashboard = () => {
         {(currentUser?.role === 'personnel' || currentUser?.role === 'teamLeader') && userTargets.length > 0 && (
           <div className="card-modern p-8">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
                 <Target className="h-5 w-5 text-white" />
               </div>
               <h3 className="text-xl font-bold text-gray-900">Hedeflerim</h3>

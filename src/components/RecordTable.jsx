@@ -654,22 +654,25 @@ const RecordTable = () => {
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex justify-between items-center">
+    <div className="p-2 sm:p-4 lg:p-6">
+      <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-3 sm:space-y-0">
         <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Satış Kayıtları</h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Satış Kayıtları</h2>
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
             Sadece <strong>{new Date().toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })}</strong> ayına ait kayıtlar gösteriliyor
-                          <span className="text-xs text-gray-400 dark:text-gray-500 ml-2">
+            <span className="hidden sm:inline text-xs text-gray-400 dark:text-gray-500 ml-2">
               ({new Date(new Date().getFullYear(), new Date().getMonth(), 1).toLocaleDateString('tr-TR')} - {new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toLocaleDateString('tr-TR')})
             </span>
           </p>
-
         </div>
-        <div className="text-right">
+        <div className="text-left sm:text-right">
           <div>
-            <span className="text-sm text-gray-600">
-              Toplam {totalRecords} kayıt • Sayfa {currentPage}/{totalPages} • Gösterilen: {startIndex + 1}-{Math.min(endIndex, totalRecords)}
+            <span className="text-xs sm:text-sm text-gray-600">
+              <span className="block sm:inline">Toplam {totalRecords} kayıt</span>
+              <span className="hidden sm:inline"> • </span>
+              <span className="block sm:inline">Sayfa {currentPage}/{totalPages}</span>
+              <span className="hidden sm:inline"> • </span>
+              <span className="block sm:inline">Gösterilen: {startIndex + 1}-{Math.min(endIndex, totalRecords)}</span>
             </span>
 
             {userRole === 'personnel' && (
@@ -682,36 +685,40 @@ const RecordTable = () => {
       </div>
 
       {/* Filtreler */}
-      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm mb-6 border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center mb-4">
-          <Filter className="h-5 w-5 text-gray-400 dark:text-gray-500 mr-2" />
-          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Filtreler</h3>
-          <div className="ml-auto flex items-center space-x-3">
+      <div className="bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow-sm mb-4 sm:mb-6 border border-gray-200 dark:border-gray-700">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center mb-3 sm:mb-4 space-y-2 sm:space-y-0">
+          <div className="flex items-center">
+            <Filter className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 dark:text-gray-500 mr-2" />
+            <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100">Filtreler</h3>
+          </div>
+          <div className="flex items-center space-x-2 sm:space-x-3 sm:ml-auto">
             <button
               onClick={handleRefresh}
               disabled={loading}
-              className="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center transition-colors text-sm"
+              className="bg-blue-600 text-white px-2 py-1 sm:px-3 sm:py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center transition-colors text-xs sm:text-sm"
             >
               <svg 
-                className={`h-4 w-4 mr-1 ${loading ? 'animate-spin' : ''}`} 
+                className={`h-3 w-3 sm:h-4 sm:w-4 mr-1 ${loading ? 'animate-spin' : ''}`} 
                 fill="none" 
                 viewBox="0 0 24 24" 
                 stroke="currentColor"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-              {loading ? 'Yükleniyor...' : 'Yenile'}
+              <span className="hidden sm:inline">{loading ? 'Yükleniyor...' : 'Yenile'}</span>
+              <span className="sm:hidden">⟳</span>
             </button>
             <button
               onClick={clearFiltersWithReset}
-              className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+              className="text-xs sm:text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
             >
-              Filtreleri Temizle
+              <span className="hidden sm:inline">Filtreleri Temizle</span>
+              <span className="sm:hidden">Temizle</span>
             </button>
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-3 sm:gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Personel
@@ -828,34 +835,34 @@ const RecordTable = () => {
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Personel
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
                   Tarih
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Telefon
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
                   Kanal
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Durum
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                   Satış Detayı
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">
                   Abonelik
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">
                   Abone No
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                   Not
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   İşlemler
                 </th>
               </tr>
@@ -863,60 +870,75 @@ const RecordTable = () => {
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {currentRecords.map((record) => (
                 <tr key={record.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <User className="h-4 w-4 text-gray-400 mr-2" />
-                      <span className="text-sm text-gray-900 dark:text-gray-100">{record.personel}</span>
+                      <User className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400 mr-1 sm:mr-2" />
+                      <span className="text-xs sm:text-sm text-gray-900 dark:text-gray-100 truncate max-w-20 sm:max-w-none">{record.personel}</span>
+                    </div>
+                    {/* Mobilde tarih bilgisini personel altında göster */}
+                    <div className="sm:hidden mt-1 text-xs text-gray-500">
+                      {formatDate(record.tarih) || record.tarih || '-'}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden sm:table-cell">
                     <div className="flex items-center">
                       <Calendar className="h-4 w-4 text-gray-400 mr-2" />
                       <span className="text-sm text-gray-900 dark:text-gray-100">{formatDate(record.tarih) || record.tarih || '-'}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <Phone className="h-4 w-4 text-gray-400 mr-2" />
-                      <span className="text-sm text-gray-900 dark:text-gray-100">{formatPhoneNumber(record.telefon) || record.telefon || '-'}</span>
+                      <Phone className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400 mr-1 sm:mr-2" />
+                      <span className="text-xs sm:text-sm text-gray-900 dark:text-gray-100">{formatPhoneNumber(record.telefon) || record.telefon || '-'}</span>
+                    </div>
+                    {/* Mobilde kanal bilgisini telefon altında göster */}
+                    <div className="md:hidden mt-1">
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                        {record.kanal}
+                      </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden md:table-cell">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
                       {record.kanal}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                    <span className={`inline-flex items-center px-1.5 sm:px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       record.durum === 'Arandı' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' :
                       record.durum === 'Meşgul' ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200' :
                       record.durum === 'Ulaşılamadı' ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200' :
                       record.durum === 'Geri Arama' ? 'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200' :
                       'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
                     }`}>
-                      {record.durum}
+                      <span className="sm:hidden">{record.durum.slice(0, 3)}</span>
+                      <span className="hidden sm:inline">{record.durum}</span>
                     </span>
+                    {/* Mobilde detay bilgisini durum altında göster */}
+                    <div className="lg:hidden mt-1 text-xs text-gray-500 truncate max-w-20 sm:max-w-32">
+                      {record.detay || '-'}
+                    </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100 hidden lg:table-cell">
                     {record.detay || '-'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100 hidden xl:table-cell">
                     {record.abonelikDurum || '-'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100 hidden xl:table-cell">
                     {record.aboneNo || '-'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 max-w-xs truncate" title={record.not}>
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100 max-w-xs truncate hidden lg:table-cell" title={record.not}>
                     {record.not || '-'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex items-center justify-end space-x-2">
+                  <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div className="flex items-center justify-end space-x-1 sm:space-x-2">
                       <button 
                         onClick={() => handleEditRecord(record)}
                         className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 p-1 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
                         title="Kaydı Düzenle"
                       >
-                        <Edit className="h-4 w-4" />
+                        <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
                       </button>
                       
                       {(userRole === 'admin' || userRole === 'teamLeader') && (
@@ -927,9 +949,9 @@ const RecordTable = () => {
                           title="Kaydı Sil"
                         >
                           {deleting === record.id ? (
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600 dark:border-red-400"></div>
+                            <div className="animate-spin rounded-full h-3 w-3 sm:h-4 sm:w-4 border-b-2 border-red-600 dark:border-red-400"></div>
                           ) : (
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                           )}
                         </button>
                       )}
@@ -950,10 +972,10 @@ const RecordTable = () => {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="bg-white dark:bg-gray-800 px-4 py-4 mt-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 px-3 sm:px-4 py-3 sm:py-4 mt-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
           {/* Sayfa bilgisi */}
-          <div className="flex justify-center mb-4">
-            <p className="text-sm text-gray-700 dark:text-gray-300">
+          <div className="flex justify-center mb-3 sm:mb-4">
+            <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">
               <span className="font-medium">{startIndex + 1}</span> - <span className="font-medium">{Math.min(endIndex, totalRecords)}</span> arası, 
               toplam <span className="font-medium">{totalRecords}</span> kayıt
             </p>
@@ -966,9 +988,10 @@ const RecordTable = () => {
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="relative inline-flex items-center px-3 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="relative inline-flex items-center px-2 sm:px-3 py-1 sm:py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                ← Önceki
+                <span className="sm:hidden">←</span>
+                <span className="hidden sm:inline">← Önceki</span>
               </button>
               
               {/* Sayfa numaraları */}
@@ -988,7 +1011,7 @@ const RecordTable = () => {
                   <button
                     key={pageNum}
                     onClick={() => handlePageChange(pageNum)}
-                    className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                    className={`relative inline-flex items-center px-2 sm:px-4 py-1 sm:py-2 border text-xs sm:text-sm font-medium ${
                       currentPage === pageNum
                         ? 'z-10 bg-blue-600 dark:bg-blue-600 border-blue-600 dark:border-blue-600 text-white hover:bg-blue-700 dark:hover:bg-blue-700'
                         : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
@@ -1003,28 +1026,31 @@ const RecordTable = () => {
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="relative inline-flex items-center px-3 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="relative inline-flex items-center px-2 sm:px-3 py-1 sm:py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Sonraki →
+                <span className="sm:hidden">→</span>
+                <span className="hidden sm:inline">Sonraki →</span>
               </button>
             </nav>
           </div>
           
           {/* Hızlı sayfa geçişi */}
-          <div className="flex justify-center mt-4 space-x-2">
+          <div className="flex justify-center mt-3 sm:mt-4 space-x-2">
             <button
               onClick={() => handlePageChange(1)}
               disabled={currentPage === 1}
-              className="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-2 sm:px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              İlk Sayfa
+              <span className="sm:hidden">İlk</span>
+              <span className="hidden sm:inline">İlk Sayfa</span>
             </button>
             <button
               onClick={() => handlePageChange(totalPages)}
               disabled={currentPage === totalPages}
-              className="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-2 sm:px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Son Sayfa
+              <span className="sm:hidden">Son</span>
+              <span className="hidden sm:inline">Son Sayfa</span>
             </button>
           </div>
         </div>

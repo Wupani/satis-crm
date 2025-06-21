@@ -20,6 +20,8 @@ import {
   BarChart3
 } from 'lucide-react';
 
+
+
 const Analytics = () => {
   const [loading, setLoading] = useState(true);
   const [analyticsData, setAnalyticsData] = useState({
@@ -591,26 +593,26 @@ const Analytics = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-lavender-50 to-periwinkle-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="p-6">
-        <div className="max-w-7xl mx-auto space-y-6">
+      <div className="p-2 sm:p-4 lg:p-6">
+        <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
           {/* Header */}
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gradient-purple mb-2">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gradient-purple mb-1 sm:mb-2">
                 Analitik & Raporlar
               </h1>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
                 Detaylı satış performansı ve istatistiksel analiz
               </p>
             </div>
             
             {/* Controls */}
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               {/* Period Selection */}
               <div className="flex bg-white dark:bg-gray-800 rounded-xl p-1 shadow-sm">
                 <button
                   onClick={() => handlePeriodChange('thisMonth')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-2 sm:px-4 py-1 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
                     selectedPeriod === 'thisMonth'
                       ? 'bg-gradient-purple text-white shadow-md'
                       : 'text-gray-600 hover:text-purple-600'
@@ -620,7 +622,7 @@ const Analytics = () => {
                 </button>
                 <button
                   onClick={() => handlePeriodChange('lastMonth')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-2 sm:px-4 py-1 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
                     selectedPeriod === 'lastMonth'
                       ? 'bg-gradient-purple text-white shadow-md'
                       : 'text-gray-600 hover:text-purple-600'
@@ -630,7 +632,7 @@ const Analytics = () => {
                 </button>
                 <button
                   onClick={() => handlePeriodChange('custom')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-2 sm:px-4 py-1 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
                     selectedPeriod === 'custom'
                       ? 'bg-gradient-purple text-white shadow-md'
                       : 'text-gray-600 hover:text-purple-600'
@@ -642,69 +644,69 @@ const Analytics = () => {
 
               {/* Date Range (for custom) */}
               {selectedPeriod === 'custom' && (
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <input
                     type="date"
                     value={dateRange.startDate}
                     onChange={(e) => setDateRange(prev => ({ ...prev, startDate: e.target.value }))}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="px-2 sm:px-3 py-1 sm:py-2 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                   <input
                     type="date"
                     value={dateRange.endDate}
                     onChange={(e) => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
-                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="px-2 sm:px-3 py-1 sm:py-2 border border-gray-300 rounded-lg text-xs sm:text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                 </div>
               )}
 
               {/* Action Buttons */}
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <button
                   onClick={loadAnalyticsData}
-                  className="flex items-center space-x-2 px-4 py-2 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-xl transition-colors"
+                  className="flex items-center justify-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-1 sm:py-2 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-xl transition-colors"
                 >
-                  <RefreshCw className="h-4 w-4" />
-                  <span className="text-sm font-medium">Yenile</span>
+                  <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="text-xs sm:text-sm font-medium">Yenile</span>
                 </button>
                 <button
                   onClick={exportData}
-                  className="flex items-center space-x-2 px-4 py-2 bg-gradient-purple text-white rounded-xl hover:shadow-lg transition-all"
+                  className="flex items-center justify-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-1 sm:py-2 bg-gradient-purple text-white rounded-xl hover:shadow-lg transition-all"
                 >
-                  <Download className="h-4 w-4" />
-                  <span className="text-sm font-medium">Dışa Aktar</span>
+                  <Download className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="text-xs sm:text-sm font-medium">Dışa Aktar</span>
                 </button>
               </div>
             </div>
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {statsCards.map((stat, index) => {
               const Icon = stat.icon;
               return (
-                <div key={index} className="card-modern p-6 hover:scale-105 transition-transform duration-300">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={`w-12 h-12 ${stat.iconBg} rounded-xl flex items-center justify-center shadow-lg`}>
-                      <Icon className="h-6 w-6 text-white" />
+                <div key={index} className="card-modern p-4 sm:p-6 hover:scale-105 transition-transform duration-300">
+                  <div className="flex items-center justify-between mb-3 sm:mb-4">
+                    <div className={`w-10 h-10 sm:w-12 sm:h-12 ${stat.iconBg} rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg`}>
+                      <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                     </div>
-                    <div className={`flex items-center space-x-1 text-sm font-semibold ${
+                    <div className={`flex items-center space-x-1 text-xs sm:text-sm font-semibold ${
                       stat.changeType === 'positive' ? 'text-green-600' : 
                       stat.changeType === 'negative' ? 'text-red-600' : 'text-gray-600'
                     }`}>
                       {stat.changeType === 'positive' ? (
-                        <ArrowUp className="h-4 w-4" />
+                        <ArrowUp className="h-3 w-3 sm:h-4 sm:w-4" />
                       ) : stat.changeType === 'negative' ? (
-                        <ArrowDown className="h-4 w-4" />
+                        <ArrowDown className="h-3 w-3 sm:h-4 sm:w-4" />
                       ) : null}
                       <span>{stat.change}</span>
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+                  <div className="space-y-1 sm:space-y-2">
+                    <h3 className="text-xs sm:text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
                       {stat.title}
                     </h3>
-                    <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">
                       {stat.value.toLocaleString('tr-TR')}
                     </p>
                   </div>
@@ -714,14 +716,14 @@ const Analytics = () => {
           </div>
 
           {/* Detailed Analysis Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             {/* Satış Detay Dağılımı */}
-            <div className="card-modern p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="card-modern p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">
                   Satış Detay Dağılımı
                 </h3>
-                <PieChart className="h-5 w-5 text-purple-600" />
+                <PieChart className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
               </div>
               <div className="space-y-4">
                 {analyticsData.salesDetailDistribution?.map((detail, index) => {
@@ -1025,6 +1027,8 @@ const Analytics = () => {
               </div>
             </div>
           </div>
+
+
 
         </div>
       </div>
