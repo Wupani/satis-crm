@@ -35,24 +35,38 @@ const Navbar = () => {
 
   // Admin için güvenlik alertlerini dinle
   useEffect(() => {
-    if (userRole !== 'admin') return;
+    if (userRole !== 'admin') {
+      console.log(`🚫 Navbar: Admin değil (${userRole}) - alert sistemi devre dışı`);
+      return;
+    }
 
+    console.log(`🔔 Navbar: Admin alert sistemi başlatılıyor...`);
     const alertsQuery = query(
       collection(db, 'security_alerts'),
       where('isRead', '==', false)
     );
 
     const unsubscribe = onSnapshot(alertsQuery, (snapshot) => {
+      console.log(`📬 Navbar: Alert snapshot alındı - ${snapshot.size} okunmamış alert`);
+      
       const alertsData = [];
       snapshot.forEach((doc) => {
-        alertsData.push({ id: doc.id, ...doc.data() });
+        const data = doc.data();
+        console.log(`🚨 Alert: ${data.userName} - ${data.newIP} - ${data.timestamp?.toDate?.()?.toLocaleString('tr-TR')}`);
+        alertsData.push({ id: doc.id, ...data });
       });
       
       setAlerts(alertsData);
       setUnreadCount(alertsData.length);
+      console.log(`✅ Navbar: ${alertsData.length} alert state'e kaydedildi`);
+    }, (error) => {
+      console.error('❌ Navbar: Alert dinleme hatası:', error);
     });
 
-    return () => unsubscribe();
+    return () => {
+      console.log(`🔕 Navbar: Alert listener kapatılıyor`);
+      unsubscribe();
+    };
   }, [userRole]);
 
   // Alert'i okundu olarak işaretle

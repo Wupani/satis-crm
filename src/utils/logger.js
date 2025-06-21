@@ -131,10 +131,13 @@ class Logger {
 
   // Özel log methodları
   async logUserLogin(userId, userName, email) {
+    console.log(`🔐 Giriş logu kaydediliyor - User: ${userName} (${email})`);
+    
     // IP değişikliği kontrolü yap
     await this.checkIPChange(userId, userName, email);
     
-    return this.success(
+    console.log(`📋 Normal giriş logu Firebase'e kaydediliyor...`);
+    const result = await this.success(
       LOG_CATEGORIES.AUTH,
       'User Login',
       {
@@ -144,16 +147,24 @@ class Logger {
       userId,
       userName
     );
+    
+    console.log(`✅ Giriş logu kaydedildi`);
+    return result;
   }
 
   // IP değişikliği kontrol fonksiyonu
   async checkIPChange(userId, userName, email) {
     try {
+      console.log(`🔍 IP değişikliği kontrolü başlatıldı - User: ${userName} (${email})`);
+      
       const currentIP = await this.getClientIP();
+      console.log(`🌐 Mevcut IP: ${currentIP}`);
       
       // Son 30 gün içindeki giriş loglarını kontrol et
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      console.log(`📅 Son 30 gün kontrolü: ${thirtyDaysAgo.toLocaleDateString('tr-TR')} - ${new Date().toLocaleDateString('tr-TR')}`);
       
       // Firebase'den son giriş loglarını çek
       const { query, where, orderBy, limit, getDocs } = await import('firebase/firestore');
@@ -167,29 +178,46 @@ class Logger {
         limit(10)
       );
       
+      console.log(`🔎 Firebase'den son giriş logları çekiliyor...`);
       const recentLogins = await getDocs(recentLoginsQuery);
       const previousIPs = new Set();
       
+      console.log(`📊 Bulunan giriş logu sayısı: ${recentLogins.size}`);
+      
       recentLogins.forEach(doc => {
         const data = doc.data();
+        console.log(`📋 Log: ${data.timestamp?.toDate?.()?.toLocaleString('tr-TR')} - IP: ${data.ip}`);
         if (data.ip && data.ip !== 'unknown') {
           previousIPs.add(data.ip);
         }
       });
       
+      console.log(`🗂️ Önceki IP'ler: [${Array.from(previousIPs).join(', ')}]`);
+      console.log(`❓ Mevcut IP (${currentIP}) önceki IP'lerde var mı: ${previousIPs.has(currentIP)}`);
+      
       // Eğer bu IP daha önce kullanılmamışsa alert oluştur
       if (previousIPs.size > 0 && !previousIPs.has(currentIP)) {
+        console.log(`🚨 ALERT TETİKLENDİ! Farklı IP tespit edildi.`);
         await this.createSecurityAlert(userId, userName, email, currentIP, Array.from(previousIPs));
+      } else if (previousIPs.size === 0) {
+        console.log(`ℹ️ İlk giriş - önceki IP kaydı yok, alert oluşturulmadı.`);
+      } else {
+        console.log(`✅ Bilinen IP'den giriş - alert gerekmiyor.`);
       }
       
     } catch (error) {
-      console.error('IP değişikliği kontrolü sırasında hata:', error);
+      console.error('❌ IP değişikliği kontrolü sırasında hata:', error);
     }
   }
 
   // Güvenlik alerti oluştur
   async createSecurityAlert(userId, userName, email, newIP, previousIPs) {
     try {
+      console.log(`🚨 Güvenlik alerti oluşturuluyor...`);
+      console.log(`👤 Kullanıcı: ${userName} (${email})`);
+      console.log(`🆕 Yeni IP: ${newIP}`);
+      console.log(`📜 Önceki IP'ler: ${previousIPs.join(', ')}`);
+      
       const alertData = {
         type: 'ip_change_alert',
         severity: 'medium',
@@ -209,8 +237,10 @@ class Logger {
         }
       };
 
+      console.log(`💾 Firebase'e alert kaydediliyor...`);
       // Alerts collection'ına kaydet
-      await addDoc(collection(db, 'security_alerts'), alertData);
+      const docRef = await addDoc(collection(db, 'security_alerts'), alertData);
+      console.log(`✅ Alert kaydedildi - ID: ${docRef.id}`);
       
       // Güvenlik logu da kaydet
       await this.security(
@@ -220,16 +250,20 @@ class Logger {
           email,
           newIP,
           previousIPs: previousIPs.join(', '),
-          alertCreated: true
+          alertCreated: true,
+          alertId: docRef.id
         },
         userId,
         userName
       );
       
+      console.log(`📝 Güvenlik logu da kaydedildi`);
       console.warn(`🚨 Güvenlik Alerti: ${userName} farklı IP'den giriş yaptı - Yeni IP: ${newIP}`);
       
     } catch (error) {
-      console.error('Güvenlik alerti oluşturulurken hata:', error);
+      console.error('❌ Güvenlik alerti oluşturulurken hata:', error);
+      console.error('❌ Hata detayı:', error.message);
+      console.error('❌ Stack trace:', error.stack);
     }
   }
 
