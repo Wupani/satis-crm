@@ -275,6 +275,12 @@ export const AuthProvider = ({ children }) => {
                 isSwitched: false
               };
               setCurrentUser(userWithInfo);
+              
+              // Giriş logunu kaydet (IP kontrolü ile)
+              if (userData.email !== 'wupaniyazilim@gmail.com') {
+                const logger = (await import('../utils/logger')).default;
+                await logger.logUserLogin(user.uid, userInfo.name, userData.email);
+              }
             } else {
               // Kullanıcı veritabanında bulunamadı
       

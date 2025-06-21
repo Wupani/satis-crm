@@ -131,6 +131,9 @@ class Logger {
 
   // Özel log methodları
   async logUserLogin(userId, userName, email) {
+    // IP değişikliği kontrolü yap
+    await this.checkIPChange(userId, userName, email);
+    
     return this.success(
       LOG_CATEGORIES.AUTH,
       'User Login',
@@ -141,6 +144,93 @@ class Logger {
       userId,
       userName
     );
+  }
+
+  // IP değişikliği kontrol fonksiyonu
+  async checkIPChange(userId, userName, email) {
+    try {
+      const currentIP = await this.getClientIP();
+      
+      // Son 30 gün içindeki giriş loglarını kontrol et
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      // Firebase'den son giriş loglarını çek
+      const { query, where, orderBy, limit, getDocs } = await import('firebase/firestore');
+      const logsRef = collection(db, 'system_logs');
+      const recentLoginsQuery = query(
+        logsRef,
+        where('userId', '==', userId),
+        where('action', '==', 'User Login'),
+        where('timestamp', '>=', thirtyDaysAgo),
+        orderBy('timestamp', 'desc'),
+        limit(10)
+      );
+      
+      const recentLogins = await getDocs(recentLoginsQuery);
+      const previousIPs = new Set();
+      
+      recentLogins.forEach(doc => {
+        const data = doc.data();
+        if (data.ip && data.ip !== 'unknown') {
+          previousIPs.add(data.ip);
+        }
+      });
+      
+      // Eğer bu IP daha önce kullanılmamışsa alert oluştur
+      if (previousIPs.size > 0 && !previousIPs.has(currentIP)) {
+        await this.createSecurityAlert(userId, userName, email, currentIP, Array.from(previousIPs));
+      }
+      
+    } catch (error) {
+      console.error('IP değişikliği kontrolü sırasında hata:', error);
+    }
+  }
+
+  // Güvenlik alerti oluştur
+  async createSecurityAlert(userId, userName, email, newIP, previousIPs) {
+    try {
+      const alertData = {
+        type: 'ip_change_alert',
+        severity: 'medium',
+        userId,
+        userName,
+        email,
+        newIP,
+        previousIPs,
+        timestamp: serverTimestamp(),
+        isRead: false,
+        details: {
+          message: `${userName} (${email}) farklı bir IP adresinden giriş yaptı`,
+          newIP,
+          previousIPs: previousIPs.join(', '),
+          userAgent: navigator.userAgent,
+          loginTime: new Date().toISOString()
+        }
+      };
+
+      // Alerts collection'ına kaydet
+      await addDoc(collection(db, 'security_alerts'), alertData);
+      
+      // Güvenlik logu da kaydet
+      await this.security(
+        LOG_CATEGORIES.SECURITY,
+        'Suspicious IP Login',
+        {
+          email,
+          newIP,
+          previousIPs: previousIPs.join(', '),
+          alertCreated: true
+        },
+        userId,
+        userName
+      );
+      
+      console.warn(`🚨 Güvenlik Alerti: ${userName} farklı IP'den giriş yaptı - Yeni IP: ${newIP}`);
+      
+    } catch (error) {
+      console.error('Güvenlik alerti oluşturulurken hata:', error);
+    }
   }
 
   async logUserLogout(userId, userName, email) {

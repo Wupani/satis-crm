@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useDarkMode } from '../context/DarkModeContext';
-import { LogOut, User, Moon, Sun, ChevronDown, Shield, Menu, X, Clock } from 'lucide-react';
+import { LogOut, User, Moon, Sun, ChevronDown, Shield, Menu, X, Clock, Bell, AlertTriangle } from 'lucide-react';
+import { collection, query, where, onSnapshot, updateDoc, doc } from 'firebase/firestore';
+import { db } from '../auth/firebaseConfig';
 
 const Navbar = () => {
   const { currentUser, userRole, userName, logout, sessionTimeout, lastActivity } = useAuth();
@@ -9,6 +11,9 @@ const Navbar = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
+  const [alerts, setAlerts] = useState([]);
+  const [showAlerts, setShowAlerts] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   // Kalan süreyi hesapla
   useEffect(() => {
@@ -27,6 +32,52 @@ const Navbar = () => {
 
     return () => clearInterval(interval);
   }, [currentUser, sessionTimeout, lastActivity]);
+
+  // Admin için güvenlik alertlerini dinle
+  useEffect(() => {
+    if (userRole !== 'admin') return;
+
+    const alertsQuery = query(
+      collection(db, 'security_alerts'),
+      where('isRead', '==', false)
+    );
+
+    const unsubscribe = onSnapshot(alertsQuery, (snapshot) => {
+      const alertsData = [];
+      snapshot.forEach((doc) => {
+        alertsData.push({ id: doc.id, ...doc.data() });
+      });
+      
+      setAlerts(alertsData);
+      setUnreadCount(alertsData.length);
+    });
+
+    return () => unsubscribe();
+  }, [userRole]);
+
+  // Alert'i okundu olarak işaretle
+  const markAlertAsRead = async (alertId) => {
+    try {
+      await updateDoc(doc(db, 'security_alerts', alertId), {
+        isRead: true
+      });
+    } catch (error) {
+      console.error('Alert okundu olarak işaretlenirken hata:', error);
+    }
+  };
+
+  // Tüm alertleri okundu olarak işaretle
+  const markAllAlertsAsRead = async () => {
+    try {
+      const updatePromises = alerts.map(alert => 
+        updateDoc(doc(db, 'security_alerts', alert.id), { isRead: true })
+      );
+      await Promise.all(updatePromises);
+      setShowAlerts(false);
+    } catch (error) {
+      console.error('Tüm alertler okundu olarak işaretlenirken hata:', error);
+    }
+  };
 
   // Süreyi formatla
   const formatTimeLeft = (ms) => {
@@ -88,6 +139,88 @@ const Navbar = () => {
             >
               {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </button>
+
+            {/* Security Alerts (Admin Only) */}
+            {userRole === 'admin' && (
+              <div className="relative">
+                <button
+                  onClick={() => setShowAlerts(!showAlerts)}
+                  className="relative p-2 text-gray-400 hover:text-purple-600 rounded-xl hover:bg-purple-50 transition-all duration-300 icon-hover"
+                  title="Güvenlik Alertleri"
+                >
+                  <Bell className="h-5 w-5" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
+                </button>
+
+                {/* Alerts Dropdown */}
+                {showAlerts && (
+                  <div className="absolute right-0 mt-2 w-96 bg-white dark:bg-gray-800 rounded-2xl shadow-modern-hover border border-purple-100 dark:border-gray-700 py-2 z-50 max-h-96 overflow-y-auto">
+                    {/* Header */}
+                    <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                      <h3 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center">
+                        <AlertTriangle className="h-4 w-4 mr-2 text-orange-500" />
+                        Güvenlik Alertleri
+                      </h3>
+                      {alerts.length > 0 && (
+                        <button
+                          onClick={markAllAlertsAsRead}
+                          className="text-xs text-purple-600 hover:text-purple-800 font-medium"
+                        >
+                          Tümünü Okundu İşaretle
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Alerts List */}
+                    <div className="max-h-64 overflow-y-auto">
+                      {alerts.length === 0 ? (
+                        <div className="px-4 py-6 text-center text-gray-500">
+                          <Bell className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+                          <p>Yeni güvenlik alerti yok</p>
+                        </div>
+                      ) : (
+                        alerts.map((alert) => (
+                          <div
+                            key={alert.id}
+                            className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 last:border-b-0 cursor-pointer"
+                            onClick={() => markAlertAsRead(alert.id)}
+                          >
+                            <div className="flex items-start space-x-3">
+                              <div className="flex-shrink-0">
+                                <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                                  <AlertTriangle className="h-4 w-4 text-orange-600" />
+                                </div>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                  Farklı IP'den Giriş
+                                </p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                  {alert.userName} ({alert.email})
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  Yeni IP: {alert.newIP}
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  {alert.timestamp?.toDate ? 
+                                    alert.timestamp.toDate().toLocaleString('tr-TR') : 
+                                    'Tarih bilinmiyor'
+                                  }
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* User Menu */}
             <div className="relative">
@@ -222,6 +355,22 @@ const Navbar = () => {
 
             {/* Mobile Actions */}
             <div className="space-y-2 px-2">
+              {/* Security Alerts - Mobile (Admin Only) */}
+              {userRole === 'admin' && (
+                <button 
+                  onClick={() => setShowAlerts(!showAlerts)}
+                  className="w-full flex items-center space-x-3 p-3 text-gray-700 hover:bg-orange-50 hover:text-orange-700 rounded-xl transition-colors text-left relative"
+                >
+                  <Bell className="h-5 w-5" />
+                  <span className="font-medium">Güvenlik Alertleri</span>
+                  {unreadCount > 0 && (
+                    <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
+                </button>
+              )}
+
               <button 
                 onClick={toggleDarkMode}
                 className="w-full flex items-center space-x-3 p-3 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-xl transition-colors text-left"
