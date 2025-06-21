@@ -65,25 +65,32 @@ export const AuthProvider = ({ children }) => {
     };
   }, [currentUser]);
 
-  // Sistem ayarlarını yükle
+  // Sistem ayarlarını yükle - Hemen başlangıçta yükle
   useEffect(() => {
     const loadSystemSettings = async () => {
       try {
+        console.log('🔧 Sistem ayarları yükleniyor...');
         const settingsDoc = await getDoc(doc(db, 'system_settings', 'main'));
         if (settingsDoc.exists()) {
           const settings = settingsDoc.data();
           if (settings.security?.sessionTimeout) {
             setSessionTimeout(settings.security.sessionTimeout);
-            console.log(`🔧 Oturum zaman aşımı ayarı yüklendi: ${settings.security.sessionTimeout} dakika`);
+            console.log(`✅ Oturum zaman aşımı ayarı yüklendi: ${settings.security.sessionTimeout} dakika`);
+          } else {
+            console.log('⚠️ Sistem ayarlarında sessionTimeout bulunamadı, varsayılan değer kullanılıyor: 480 dakika');
           }
+        } else {
+          console.log('⚠️ Sistem ayarları dokümanı bulunamadı, varsayılan değer kullanılıyor: 480 dakika');
         }
       } catch (error) {
-        console.error('Sistem ayarları yüklenirken hata:', error);
+        console.error('❌ Sistem ayarları yüklenirken hata:', error);
+        console.log('🔄 Varsayılan değer kullanılıyor: 480 dakika');
       }
     };
 
+    // Hemen yükle, kullanıcı girişini bekleme
     loadSystemSettings();
-  }, []);
+  }, []); // Boş dependency array - sadece component mount olduğunda çalış
 
   const handleSessionTimeout = async () => {
     try {

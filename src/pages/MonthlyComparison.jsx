@@ -42,19 +42,49 @@ const MonthlyComparison = () => {
   }, [selectedYear, currentUser]);
 
   const fetchMonthlyData = async () => {
-    if (!currentUser) return;
-    
     setLoading(true);
-    
     try {
       console.log(`📊 ${selectedYear} yılı aylık verileri yükleniyor...`);
       
       // Tüm kayıtları çek
       let recordsQuery = collection(db, 'sales_records');
+      let allowedUserIds = [];
       
-      // Eğer admin değilse sadece kendi kayıtlarını göster
+      // Eğer admin değilse, yetki kontrolü yap
       if (userRole !== 'admin') {
-        recordsQuery = query(recordsQuery, where('createdBy', '==', currentUser.uid));
+        if (userRole === 'teamLeader') {
+          // Takım lideri ise: kendisi + takım üyeleri
+          console.log('👥 Takım lideri - takım üyelerinin verilerini yüklüyor...');
+          
+          // Önce tüm kullanıcıları çek
+          const usersSnapshot = await getDocs(collection(db, 'users'));
+          const users = [];
+          usersSnapshot.forEach(doc => {
+            users.push({ id: doc.id, ...doc.data() });
+          });
+          
+          // Takım liderinin kendisi
+          allowedUserIds.push(currentUser.uid);
+          
+          // Takım üyelerini bul (teamLeader alanı bu kullanıcının ID'si olan)
+          const teamMembers = users.filter(user => 
+            user.teamLeader === currentUser.uid || user.teamLeader === currentUser.id
+          );
+          
+          teamMembers.forEach(member => {
+            allowedUserIds.push(member.id);
+          });
+          
+          console.log(`✅ Takım lideri yetkisi - ${allowedUserIds.length} kullanıcının verisi yüklenecek:`, allowedUserIds);
+          
+        } else {
+          // Personel ise: sadece kendi kayıtları
+          allowedUserIds = [currentUser.uid];
+          console.log('👤 Personel - sadece kendi verileri yükleniyor...');
+        }
+        
+        // Kayıtları filtrele
+        recordsQuery = query(recordsQuery, where('createdBy', 'in', allowedUserIds));
       }
       
       const recordsSnapshot = await getDocs(recordsQuery);
