@@ -358,8 +358,8 @@ const ChatSystem = () => {
       {/* Chat Window */}
       {isOpen && (
         <div className={`fixed bottom-24 right-6 z-40 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-purple-100 dark:border-gray-700 transition-all duration-300 ${
-          isMinimized ? 'h-16' : 'h-[500px]'
-        } w-96 max-w-[calc(100vw-3rem)] lg:w-96`}>
+          isMinimized ? 'h-16' : 'h-[600px]'
+        } w-[450px] max-w-[calc(100vw-3rem)] lg:w-[450px]`}>
           
           {/* Chat Header */}
           <div className="flex items-center justify-between p-4 border-b border-purple-100 dark:border-gray-700 bg-gradient-purple text-white rounded-t-2xl">
@@ -407,7 +407,7 @@ const ChatSystem = () => {
 
           {/* Chat Content */}
           {!isMinimized && (
-            <div className="h-[420px] flex">
+            <div className="h-[520px] flex">
               {/* Users List */}
               {!activeChat && (
                 <div className="w-full p-4">
@@ -424,7 +424,7 @@ const ChatSystem = () => {
                   </div>
 
                   {/* Users */}
-                  <div className="space-y-2 max-h-80 overflow-y-auto">
+                  <div className="space-y-2 max-h-96 overflow-y-auto">
                     {sortedUsers.map(user => {
                       const isOnline = onlineUsers.has(user.id);
                       const userStatus = userStatuses[user.id];
@@ -507,7 +507,7 @@ const ChatSystem = () => {
                   </button>
 
                   {/* Messages */}
-                  <div className="flex-1 p-4 overflow-y-auto space-y-2 max-h-80">
+                  <div className="flex-1 p-4 overflow-y-auto space-y-2 max-h-96">
                     {messages.map((message, index) => {
                       // Önceki mesajla aynı kişiden mi kontrol et
                       const prevMessage = messages[index - 1];
