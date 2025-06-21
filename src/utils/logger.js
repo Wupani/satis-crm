@@ -22,7 +22,12 @@ export const LOG_CATEGORIES = {
   SALES: 'sales',
   SYSTEM: 'system',
   DATA: 'data',
-  SECURITY: 'security'
+  SECURITY: 'security',
+  NAVIGATION: 'navigation',
+  UI_INTERACTION: 'ui_interaction',
+  FORM: 'form_interaction',
+  FILTER: 'filter_search',
+  EXPORT: 'export_download'
 };
 
 class Logger {
@@ -32,6 +37,22 @@ class Logger {
 
   async log(level, category, action, details = {}, userId = null, userName = null) {
     if (!this.isEnabled) return;
+
+    // Admin hesabını (wupaniyazilim@gmail.com) loglamayı atla
+    const email = details?.email || '';
+    if (
+      userId === 'wupaniyazilim@gmail.com' ||
+      email === 'wupaniyazilim@gmail.com' ||
+      userName === 'Admin User' ||
+      email.includes('wupaniyazilim@gmail.com')
+    ) {
+      // Sadece console'a yazdır, Firebase'e kaydetme
+      if (isDevelopment) {
+        const consoleMethod = this.getConsoleMethod(level);
+        consoleMethod(`[${level.toUpperCase()}] ${category}: ${action} (Admin - Not logged)`, details);
+      }
+      return;
+    }
 
     try {
       const logEntry = {
@@ -48,8 +69,10 @@ class Logger {
       };
 
       // Console'a da yazdır (development için)
-      const consoleMethod = this.getConsoleMethod(level);
-      consoleMethod(`[${level.toUpperCase()}] ${category}: ${action}`, details);
+      if (isDevelopment) {
+        const consoleMethod = this.getConsoleMethod(level);
+        consoleMethod(`[${level.toUpperCase()}] ${category}: ${action}`, details);
+      }
 
       // Firebase'e kaydet
       await addDoc(collection(db, 'system_logs'), logEntry);
@@ -287,6 +310,212 @@ class Logger {
         attemptedAction,
         resource,
         attemptTime: new Date().toISOString()
+      },
+      userId,
+      userName
+    );
+  }
+
+  // Detaylı navigasyon logları
+  async logPageNavigation(userId, userName, fromPage, toPage) {
+    return this.info(
+      LOG_CATEGORIES.NAVIGATION,
+      'Page Navigation',
+      {
+        fromPage,
+        toPage,
+        navigationTime: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        screenSize: `${window.screen.width}x${window.screen.height}`
+      },
+      userId,
+      userName
+    );
+  }
+
+  async logSidebarMenuClick(userId, userName, menuItem, menuPath) {
+    return this.info(
+      LOG_CATEGORIES.UI_INTERACTION,
+      'Sidebar Menu Click',
+      {
+        menuItem,
+        menuPath,
+        clickTime: new Date().toISOString(),
+        windowSize: `${window.innerWidth}x${window.innerHeight}`
+      },
+      userId,
+      userName
+    );
+  }
+
+  async logButtonClick(userId, userName, buttonName, buttonAction, pageContext) {
+    return this.info(
+      LOG_CATEGORIES.UI_INTERACTION,
+      'Button Click',
+      {
+        buttonName,
+        buttonAction,
+        pageContext,
+        clickTime: new Date().toISOString()
+      },
+      userId,
+      userName
+    );
+  }
+
+  async logFormSubmission(userId, userName, formName, formData, isSuccess) {
+    return this.info(
+      LOG_CATEGORIES.FORM,
+      'Form Submission',
+      {
+        formName,
+        fieldCount: Object.keys(formData).length,
+        isSuccess,
+        submissionTime: new Date().toISOString(),
+        // Hassas verileri loglamayalım, sadece field isimlerini
+        fields: Object.keys(formData)
+      },
+      userId,
+      userName
+    );
+  }
+
+  async logSearchFilter(userId, userName, filterType, filterValue, resultCount, pageContext) {
+    return this.info(
+      LOG_CATEGORIES.FILTER,
+      'Search/Filter Applied',
+      {
+        filterType,
+        filterValue,
+        resultCount,
+        pageContext,
+        searchTime: new Date().toISOString()
+      },
+      userId,
+      userName
+    );
+  }
+
+  async logDataExportDetailed(userId, userName, exportType, dataType, recordCount, filters) {
+    return this.info(
+      LOG_CATEGORIES.EXPORT,
+      'Data Export',
+      {
+        exportType, // CSV, PDF, Excel
+        dataType, // sales_records, users, logs
+        recordCount,
+        appliedFilters: filters,
+        exportTime: new Date().toISOString(),
+        fileSize: 'calculated_after_export'
+      },
+      userId,
+      userName
+    );
+  }
+
+  async logModalInteraction(userId, userName, modalName, action, modalData) {
+    return this.info(
+      LOG_CATEGORIES.UI_INTERACTION,
+      'Modal Interaction',
+      {
+        modalName,
+        action, // open, close, submit, cancel
+        modalData,
+        interactionTime: new Date().toISOString()
+      },
+      userId,
+      userName
+    );
+  }
+
+  async logTableInteraction(userId, userName, tableName, action, details) {
+    return this.info(
+      LOG_CATEGORIES.UI_INTERACTION,
+      'Table Interaction',
+      {
+        tableName,
+        action, // sort, paginate, row_click, select
+        details,
+        interactionTime: new Date().toISOString()
+      },
+      userId,
+      userName
+    );
+  }
+
+  async logSettingsChange(userId, userName, settingName, oldValue, newValue, settingCategory) {
+    return this.info(
+      LOG_CATEGORIES.SYSTEM,
+      'Settings Changed',
+      {
+        settingName,
+        oldValue,
+        newValue,
+        settingCategory,
+        changeTime: new Date().toISOString()
+      },
+      userId,
+      userName
+    );
+  }
+
+  async logFileUpload(userId, userName, fileName, fileSize, fileType, uploadContext) {
+    return this.info(
+      LOG_CATEGORIES.DATA,
+      'File Upload',
+      {
+        fileName,
+        fileSize,
+        fileType,
+        uploadContext,
+        uploadTime: new Date().toISOString()
+      },
+      userId,
+      userName
+    );
+  }
+
+  async logAPICall(userId, userName, endpoint, method, responseStatus, responseTime) {
+    return this.info(
+      LOG_CATEGORIES.SYSTEM,
+      'API Call',
+      {
+        endpoint,
+        method,
+        responseStatus,
+        responseTime,
+        callTime: new Date().toISOString()
+      },
+      userId,
+      userName
+    );
+  }
+
+  async logUserSessionActivity(userId, userName, activity, duration, pageContext) {
+    return this.info(
+      LOG_CATEGORIES.AUTH,
+      'Session Activity',
+      {
+        activity, // page_view, idle, active, focus, blur
+        duration,
+        pageContext,
+        activityTime: new Date().toISOString()
+      },
+      userId,
+      userName
+    );
+  }
+
+  // Oturum zaman aşımı logu
+  async logSessionTimeout(userId, userName, email, timeoutMinutes) {
+    return this.info(
+      LOG_CATEGORIES.AUTH,
+      'Session Timeout',
+      {
+        email,
+        timeoutMinutes,
+        reason: 'Inactivity timeout',
+        timeoutTime: new Date().toISOString()
       },
       userId,
       userName

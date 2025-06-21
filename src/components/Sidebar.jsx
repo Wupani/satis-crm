@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import logger from '../utils/logger';
 import { 
   LayoutDashboard, 
   FileText, 
@@ -21,7 +22,8 @@ import {
   ChevronDown,
   ChevronUp,
   Building2,
-  Shield
+  Shield,
+  RefreshCw
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -73,6 +75,12 @@ const Sidebar = () => {
               description: 'Detaylı performans analizleri'
             },
             {
+              path: '/monthly-comparison',
+              icon: Calendar,
+              label: 'Aylık Karşılaştırma',
+              description: 'Aylara göre performans kıyaslaması'
+            },
+            {
               path: '/team-performance',
               icon: TrendingUp,
               label: 'Takım Performansı',
@@ -88,6 +96,12 @@ const Sidebar = () => {
               icon: Users,
               label: 'Kullanıcı Yönetimi',
               description: 'Personel ve yetki yönetimi'
+            },
+            {
+              path: '/user-switcher',
+              icon: Shield,
+              label: 'Hesap Geçişi',
+              description: 'Kullanıcı hesaplarına geçiş yap'
             },
             {
               path: '/team-management',
@@ -106,6 +120,23 @@ const Sidebar = () => {
               icon: List,
               label: 'Dropdown Ayarları',
               description: 'Form seçeneklerini yönet'
+            }
+          ]
+        },
+        {
+          title: 'Veri Yönetimi',
+          items: [
+            {
+              path: '/data-import',
+              icon: FileSpreadsheet,
+              label: 'Veri İçe Aktarma',
+              description: 'Excel dosyalarından toplu veri aktarımı'
+            },
+            {
+              path: '/data-update',
+              icon: RefreshCw,
+              label: 'Veri Güncelleme',
+              description: 'Mevcut kayıtları doğru personellerle eşleştir'
             }
           ]
         },
@@ -164,6 +195,12 @@ const Sidebar = () => {
               icon: BarChart3,
               label: 'Analitik',
               description: 'Detaylı performans analizleri'
+            },
+            {
+              path: '/monthly-comparison',
+              icon: Calendar,
+              label: 'Aylık Karşılaştırma',
+              description: 'Aylara göre performans kıyaslaması'
             }
           ]
         },
@@ -224,6 +261,23 @@ const Sidebar = () => {
   const navigationCategories = getNavigationItems();
 
   const isActive = (path) => location.pathname === path;
+
+  const handleMenuClick = async (item) => {
+    // Menu tıklamasını logla
+    if (currentUser && currentUser.uid !== 'wupaniyazilim@gmail.com') {
+      try {
+        await logger.logSidebarMenuClick(
+          currentUser.uid,
+          currentUser.name || currentUser.email?.split('@')[0] || 'Kullanıcı',
+          item.label,
+          item.path
+        );
+      } catch (error) {
+        console.error('Menu click log hatası:', error);
+      }
+    }
+    setIsMobileOpen(false);
+  };
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -346,7 +400,7 @@ const Sidebar = () => {
                             <li key={item.path}>
                               <Link
                                 to={item.path}
-                                onClick={() => setIsMobileOpen(false)}
+                                onClick={() => handleMenuClick(item)}
                                 className={`
                                   group flex items-center rounded-xl transition-all duration-300 transform hover:-translate-y-0.5
                                   ${isCollapsed ? 'p-3 justify-center' : 'p-3 ml-2'}

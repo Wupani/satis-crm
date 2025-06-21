@@ -17,7 +17,8 @@ import {
   CheckCircle,
   XCircle,
   Search,
-  Calendar
+  Calendar,
+  Trash2
 } from 'lucide-react';
 import { formatDate } from '../utils/helpers';
 
@@ -98,7 +99,12 @@ const SystemLogs = () => {
     { value: 'sales', label: 'Satış İşlemleri' },
     { value: 'system', label: 'Sistem' },
     { value: 'data', label: 'Veri İşlemleri' },
-    { value: 'security', label: 'Güvenlik' }
+    { value: 'security', label: 'Güvenlik' },
+    { value: 'navigation', label: 'Sayfa Geçişleri' },
+    { value: 'ui_interaction', label: 'Kullanıcı Etkileşimleri' },
+    { value: 'form_interaction', label: 'Form İşlemleri' },
+    { value: 'filter_search', label: 'Arama & Filtreleme' },
+    { value: 'export_download', label: 'Dışa Aktarma' }
   ];
 
   useEffect(() => {
@@ -124,6 +130,14 @@ const SystemLogs = () => {
 
       // Client-side filtreleme
       let filteredLogs = allLogsData;
+
+      // Admin hesabını (wupaniyazilim@gmail.com) gizle
+      filteredLogs = filteredLogs.filter(log => 
+        log.email !== 'wupaniyazilim@gmail.com' &&
+        log.userId !== 'wupaniyazilim@gmail.com' &&
+        log.userName !== 'Admin User' &&
+        !log.details?.email?.includes('wupaniyazilim@gmail.com')
+      );
 
       if (filters.level) {
         filteredLogs = filteredLogs.filter(log => log.level === filters.level);
@@ -245,6 +259,7 @@ const SystemLogs = () => {
     setSelectedLog(log);
     setShowDetailModal(true);
   };
+
 
   const exportLogs = () => {
     // CSV export functionality
@@ -464,6 +479,7 @@ const SystemLogs = () => {
             <Download className="h-4 w-4" />
             CSV İndir
           </button>
+
         </div>
       </div>
 

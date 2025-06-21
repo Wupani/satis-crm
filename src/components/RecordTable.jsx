@@ -363,9 +363,28 @@ const RecordTable = () => {
   const currentRecords = filteredRecords.slice(startIndex, endIndex);
 
   // Sayfa değiştiğinde en üste scroll et
-  const handlePageChange = (pageNumber) => {
+  const handlePageChange = async (pageNumber) => {
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Sayfa değiştirme işlemini logla
+    if (currentUser && currentUser.uid !== 'wupaniyazilim@gmail.com') {
+      try {
+        await logger.logTableInteraction(
+          currentUser.uid,
+          currentUser.name || currentUser.email?.split('@')[0] || 'Kullanıcı',
+          'sales_records_table',
+          'paginate',
+          { 
+            newPage: pageNumber, 
+            totalPages: Math.ceil(filteredRecords.length / recordsPerPage),
+            recordsPerPage 
+          }
+        );
+      } catch (error) {
+        console.error('Pagination log hatası:', error);
+      }
+    }
   };
 
   // Filtre değiştiğinde sayfayı 1'e sıfırla
@@ -380,12 +399,28 @@ const RecordTable = () => {
     setCurrentPage(1);
   };
 
-  const handleFilterChange = (e) => {
+  const handleFilterChange = async (e) => {
     const { name, value } = e.target;
     setFilter(prev => ({
       ...prev,
       [name]: value
     }));
+    
+    // Filtreleme işlemini logla
+    if (currentUser && currentUser.uid !== 'wupaniyazilim@gmail.com' && value) {
+      try {
+        await logger.logSearchFilter(
+          currentUser.uid,
+          currentUser.name || currentUser.email?.split('@')[0] || 'Kullanıcı',
+          name,
+          value,
+          records.length, // Filtreleme sonrası sayısını daha sonra hesaplayacağız
+          'sales_records_table'
+        );
+      } catch (error) {
+        console.error('Filter log hatası:', error);
+      }
+    }
   };
 
   const clearFilters = () => {

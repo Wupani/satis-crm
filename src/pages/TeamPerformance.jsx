@@ -62,9 +62,7 @@ const TeamPerformance = () => {
         const memberPerformances = allTeamMemberIds.map(memberId => {
           const memberRecords = teamRecords.filter(r => r.createdBy === memberId);
           const successfulSales = memberRecords.filter(record => {
-            const isSuccessful = record.detay === 'Satış Sağlandı' || 
-                               record.detay === 'Satış sağlandı' || 
-                               record.detay === 'Satış Bilgisi';
+            const isSuccessful = record.detay === 'Satış Sağlandı' || record.detay === 'Satış sağlandı';
             return isSuccessful;
           }).length;
 

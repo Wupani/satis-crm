@@ -155,9 +155,7 @@ const Analytics = () => {
       // Analytics hesaplamaları
       const totalRecords = records.length;
       const successfulSales = records.filter(r => 
-        r.durum === 'Satış Yapıldı' || 
-        r.durum === 'Satış Sağlandı' || 
-        r.durum === 'Satış Bilgisi'
+        r.detay === 'Satış Sağlandı' || r.detay === 'Satış sağlandı'
       ).length;
       const conversionRate = totalRecords > 0 ? ((successfulSales / totalRecords) * 100).toFixed(1) : 0;
 
@@ -181,9 +179,7 @@ const Analytics = () => {
           };
         }
         personnelStats[personnel].totalRecords++;
-        if (record.durum === 'Satış Yapıldı' || 
-            record.durum === 'Satış Sağlandı' || 
-            record.durum === 'Satış Bilgisi') {
+        if (record.detay === 'Satış Sağlandı' || record.detay === 'Satış sağlandı') {
           personnelStats[personnel].successfulSales++;
         }
       });
@@ -245,8 +241,7 @@ const Analytics = () => {
         }
         
         if (recordDate && !isNaN(recordDate.getTime())) {
-          const status = record.durum || record.status || '';
-          const isSuccessful = ['Satış Yapıldı', 'Satış Sağlandı', 'Satış Bilgisi'].includes(status);
+          const isSuccessful = record.detay === 'Satış Sağlandı' || record.detay === 'Satış sağlandı';
           
           if (recordDate >= startOfThisWeek) {
             weeklyStats.thisWeek.total++;

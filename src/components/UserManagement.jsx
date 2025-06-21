@@ -100,7 +100,10 @@ const UserManagement = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [actionType, setActionType] = useState(null); // 'delete', 'activate', 'deactivate'
 
+
   const roles = ['Admin', 'Team Leader', 'Personnel'];
+
+
 
   useEffect(() => {
     fetchUsers();
@@ -256,8 +259,9 @@ const UserManagement = () => {
         formData.password
       );
       
-      // Firestore'da kullanıcı bilgilerini kaydet - UID'yi document ID olarak kullan
+      // Firestore'da kullanıcı bilgilerini kaydet - UID'yi hem document ID hem de field olarak kullan
       await setDoc(doc(db, 'users', userCredential.user.uid), {
+        uid: userCredential.user.uid,  // UID field'ını da ekle
         email: formData.email,
         name: formData.name,
         role: formData.role,
@@ -474,6 +478,8 @@ const UserManagement = () => {
 
 
 
+
+
   const getRoleBadgeColor = (role) => {
     switch (role) {
       case 'Admin': return 'bg-red-100 text-red-800 border-red-200';
@@ -500,27 +506,25 @@ const UserManagement = () => {
           </div>
         </div>
         
-        <div className="flex space-x-3">          
-          <button
-            onClick={() => {
-              // Mevcut scroll pozisyonunu kaydet
-              const scrollY = window.scrollY;
-              
-              // Body scroll'ını devre dışı bırak ve pozisyonu koru
-              document.body.style.overflow = 'hidden';
-              document.body.style.position = 'fixed';
-              document.body.style.top = `-${scrollY}px`;
-              document.body.style.width = '100%';
-              
-              resetForm();
-              setShowAddModal(true);
-            }}
-            className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Yeni Kullanıcı</span>
-          </button>
-        </div>
+        <button
+          onClick={() => {
+            // Mevcut scroll pozisyonunu kaydet
+            const scrollY = window.scrollY;
+            
+            // Body scroll'ını devre dışı bırak ve pozisyonu koru
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${scrollY}px`;
+            document.body.style.width = '100%';
+            
+            resetForm();
+            setShowAddModal(true);
+          }}
+          className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Yeni Kullanıcı</span>
+        </button>
       </div>
 
 
@@ -905,6 +909,8 @@ const UserManagement = () => {
           </div>
         </div>
       </PortalModal>
+
+
 
       {/* Status Change Confirmation Modal */}
       <PortalModal isOpen={showStatusModal} onClose={() => setShowStatusModal(false)}>

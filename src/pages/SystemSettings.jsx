@@ -124,8 +124,6 @@ const SystemSettings = () => {
     }));
   };
 
-
-
   const saveSettings = async () => {
     setSaving(true);
     try {
@@ -212,8 +210,6 @@ const SystemSettings = () => {
     });
   };
 
-
-
   const renderSecuritySettings = () => (
     <div className="space-y-6">
       <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
@@ -244,14 +240,24 @@ const SystemSettings = () => {
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Oturum Zaman Aşımı (dakika)
           </label>
-          <input
-            type="number"
-            min="30"
-            max="1440"
-            value={settings.security.sessionTimeout}
-            onChange={(e) => handleSettingChange('security', 'sessionTimeout', parseInt(e.target.value))}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-          />
+          <div className="space-y-2">
+            <select
+              value={settings.security.sessionTimeout}
+              onChange={(e) => handleSettingChange('security', 'sessionTimeout', parseInt(e.target.value))}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            >
+              <option value={30}>30 dakika (0.5 saat)</option>
+              <option value={60}>1 saat</option>
+              <option value={120}>2 saat</option>
+              <option value={240}>4 saat</option>
+              <option value={480}>8 saat (varsayılan)</option>
+              <option value={720}>12 saat</option>
+              <option value={1440}>24 saat</option>
+            </select>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Kullanıcılar {Math.floor(settings.security.sessionTimeout / 60)}s {settings.security.sessionTimeout % 60}dk aktivite olmadığında otomatik çıkış yapılır
+            </p>
+          </div>
         </div>
         
         <div>
@@ -360,7 +366,7 @@ const SystemSettings = () => {
           </div>
           <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700">
             <span className="text-gray-600 dark:text-gray-400">Uygulama Versiyonu:</span>
-            <span className="font-medium text-gray-900 dark:text-white">v2.1.0</span>
+            <span className="font-medium text-gray-900 dark:text-white">v1.2.0</span>
           </div>
           <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700">
             <span className="text-gray-600 dark:text-gray-400">Son Güncelleme:</span>

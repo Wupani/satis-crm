@@ -5,6 +5,7 @@ import { DarkModeProvider } from './context/DarkModeContext';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
+import MonthlyComparison from './pages/MonthlyComparison';
 import TeamPerformance from './pages/TeamPerformance';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
@@ -16,6 +17,9 @@ import TeamManagement from './components/TeamManagement';
 import DropdownSettings from './components/DropdownSettings';
 import SystemSettings from './pages/SystemSettings';
 import SystemLogs from './pages/SystemLogs';
+import DataImport from './pages/DataImport';
+import DataUpdate from './components/DataUpdate';
+import UserSwitcher from './pages/UserSwitcher';
 import RoleGuard from './components/RoleGuard';
 import './App.css';
 
@@ -115,6 +119,20 @@ function AppContent() {
           }
         />
         <Route
+          path="/user-switcher"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <RoleGuard allowedRoles={['admin']}>
+                  <div className="p-6">
+                    <UserSwitcher />
+                  </div>
+                </RoleGuard>
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/target-management"
           element={
             <ProtectedRoute>
@@ -161,23 +179,21 @@ function AppContent() {
               <MainLayout>
                 <RoleGuard allowedRoles={['admin']}>
                   <div className="p-6">
-                    <div className="max-w-4xl mx-auto">
-                      <div className="card-modern p-8">
-                        <div className="text-center">
-                          <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                            </svg>
-                          </div>
-                          <h2 className="text-3xl font-bold text-gradient-purple mb-4">Veri İçe Aktarma</h2>
-                          <p className="text-xl text-gray-600 mb-8">Excel dosyalarından toplu veri aktarımı</p>
-                          <div className="bg-gradient-periwinkle p-6 rounded-2xl">
-                            <p className="text-gray-700 font-medium">Veri içe aktarma özelliği geliştirme aşamasında...</p>
-                            <p className="text-sm text-gray-500 mt-2">Excel dosyalarından toplu veri aktarım araçları yakında eklenecek.</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <DataImport />
+                  </div>
+                </RoleGuard>
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/data-update"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <RoleGuard allowedRoles={['admin']}>
+                  <div className="p-6">
+                    <DataUpdate />
                   </div>
                 </RoleGuard>
               </MainLayout>
@@ -273,6 +289,20 @@ function AppContent() {
               <MainLayout>
                 <RoleGuard allowedRoles={['admin', 'teamLeader']}>
                   <Analytics />
+                </RoleGuard>
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/monthly-comparison"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <RoleGuard allowedRoles={['admin', 'teamLeader']}>
+                  <div className="p-6">
+                    <MonthlyComparison />
+                  </div>
                 </RoleGuard>
               </MainLayout>
             </ProtectedRoute>

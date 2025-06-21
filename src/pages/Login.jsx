@@ -32,8 +32,8 @@ const Login = () => {
       setLoading(true);
       const userCredential = await login(email, password);
       
-      // Başarılı giriş logla
-      if (userCredential?.user) {
+      // Başarılı giriş logla (admin hesabı hariç)
+      if (userCredential?.user && email !== 'wupaniyazilim@gmail.com') {
         await logger.logUserLogin(
           userCredential.user.uid,
           userCredential.user.displayName || userCredential.user.email?.split('@')[0] || 'Kullanıcı',
@@ -65,8 +65,10 @@ const Login = () => {
         errorReason = error.message || 'Giriş hatası';
       }
       
-      // Başarısız giriş denemesini logla
-      await logger.logFailedLogin(email, errorReason);
+      // Başarısız giriş denemesini logla (admin hesabı hariç)
+      if (email !== 'wupaniyazilim@gmail.com') {
+        await logger.logFailedLogin(email, errorReason);
+      }
     }
     setLoading(false);
   };
