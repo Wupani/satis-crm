@@ -1,4 +1,4 @@
-// Güvenli logger utility
+// Güvenli logger utility - Sadece Login/Logout kayıtları
 // Production ortamında console.log'ları devre dışı bırakır
 
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -15,19 +15,10 @@ export const LOG_LEVELS = {
   SECURITY: 'security'
 };
 
-// Log kategorileri
+// Log kategorileri - Sadece auth ve security
 export const LOG_CATEGORIES = {
   AUTH: 'authentication',
-  USER_MANAGEMENT: 'user_management',
-  SALES: 'sales',
-  SYSTEM: 'system',
-  DATA: 'data',
-  SECURITY: 'security',
-  NAVIGATION: 'navigation',
-  UI_INTERACTION: 'ui_interaction',
-  FORM: 'form_interaction',
-  FILTER: 'filter_search',
-  EXPORT: 'export_download'
+  SECURITY: 'security'
 };
 
 class Logger {
@@ -70,22 +61,6 @@ class Logger {
     }
   }
 
-  getConsoleMethod(level) {
-    switch (level) {
-      case LOG_LEVELS.ERROR:
-        return console.error;
-      case LOG_LEVELS.WARNING:
-        return console.warn;
-      case LOG_LEVELS.SUCCESS:
-      case LOG_LEVELS.INFO:
-        return console.info;
-      case LOG_LEVELS.SECURITY:
-        return console.warn;
-      default:
-        return console.log;
-    }
-  }
-
   async getClientIP() {
     try {
       // Basit IP alma (production'da daha güvenli yöntemler kullanılabilir)
@@ -98,27 +73,15 @@ class Logger {
   }
 
   // Kolay kullanım methodları
-  async info(category, action, details, userId, userName) {
-    return this.log(LOG_LEVELS.INFO, category, action, details, userId, userName);
+  async success(category, action, details, userId, userName) {
+    return this.log(LOG_LEVELS.SUCCESS, category, action, details, userId, userName);
   }
 
   async warning(category, action, details, userId, userName) {
     return this.log(LOG_LEVELS.WARNING, category, action, details, userId, userName);
   }
 
-  async error(category, action, details, userId, userName) {
-    return this.log(LOG_LEVELS.ERROR, category, action, details, userId, userName);
-  }
-
-  async success(category, action, details, userId, userName) {
-    return this.log(LOG_LEVELS.SUCCESS, category, action, details, userId, userName);
-  }
-
-  async security(category, action, details, userId, userName) {
-    return this.log(LOG_LEVELS.SECURITY, category, action, details, userId, userName);
-  }
-
-  // Özel log methodları
+  // Sadece Login/Logout kayıtları
   async logUserLogin(userId, userName, email) {
     return this.success(
       LOG_CATEGORIES.AUTH,
@@ -133,7 +96,7 @@ class Logger {
   }
 
   async logUserLogout(userId, userName, email) {
-    return this.info(
+    return this.success(
       LOG_CATEGORIES.AUTH,
       'User Logout',
       {
@@ -157,389 +120,55 @@ class Logger {
     );
   }
 
-  async logUserCreated(adminUserId, adminUserName, newUserEmail, newUserRole) {
-    return this.success(
-      LOG_CATEGORIES.USER_MANAGEMENT,
-      'User Created',
-      {
-        newUserEmail,
-        newUserRole,
-        createdBy: adminUserName
-      },
-      adminUserId,
-      adminUserName
-    );
-  }
-
-  async logUserUpdated(adminUserId, adminUserName, targetUserEmail, changes) {
-    return this.info(
-      LOG_CATEGORIES.USER_MANAGEMENT,
-      'User Updated',
-      {
-        targetUserEmail,
-        changes,
-        updatedBy: adminUserName
-      },
-      adminUserId,
-      adminUserName
-    );
-  }
-
-  async logUserDeleted(adminUserId, adminUserName, deletedUserEmail) {
-    return this.warning(
-      LOG_CATEGORIES.USER_MANAGEMENT,
-      'User Deleted',
-      {
-        deletedUserEmail,
-        deletedBy: adminUserName
-      },
-      adminUserId,
-      adminUserName
-    );
-  }
-
-  async logUserActivated(adminUserId, adminUserName, targetUserEmail) {
-    return this.success(
-      LOG_CATEGORIES.USER_MANAGEMENT,
-      'User Activated',
-      {
-        targetUserEmail,
-        activatedBy: adminUserName
-      },
-      adminUserId,
-      adminUserName
-    );
-  }
-
-  async logUserDeactivated(adminUserId, adminUserName, targetUserEmail) {
-    return this.warning(
-      LOG_CATEGORIES.USER_MANAGEMENT,
-      'User Deactivated',
-      {
-        targetUserEmail,
-        deactivatedBy: adminUserName
-      },
-      adminUserId,
-      adminUserName
-    );
-  }
-
-  async logSalesRecordCreated(userId, userName, recordDetails) {
-    return this.success(
-      LOG_CATEGORIES.SALES,
-      'Sales Record Created',
-      {
-        customerPhone: recordDetails.telefon,
-        channel: recordDetails.kanal,
-        status: recordDetails.durum
-      },
-      userId,
-      userName
-    );
-  }
-
-  async logSalesRecordUpdated(userId, userName, recordId, changes) {
-    return this.info(
-      LOG_CATEGORIES.SALES,
-      'Sales Record Updated',
-      {
-        recordId,
-        changes
-      },
-      userId,
-      userName
-    );
-  }
-
-  async logSalesRecordDeleted(userId, userName, recordId) {
-    return this.warning(
-      LOG_CATEGORIES.SALES,
-      'Sales Record Deleted',
-      {
-        recordId
-      },
-      userId,
-      userName
-    );
-  }
-
-  async logSystemSettingsChanged(adminUserId, adminUserName, settingType, changes) {
-    return this.info(
-      LOG_CATEGORIES.SYSTEM,
-      'System Settings Changed',
-      {
-        settingType,
-        changes,
-        changedBy: adminUserName
-      },
-      adminUserId,
-      adminUserName
-    );
-  }
-
-  async logDataExport(userId, userName, exportType, recordCount) {
-    return this.info(
-      LOG_CATEGORIES.DATA,
-      'Data Export',
-      {
-        exportType,
-        recordCount,
-        exportTime: new Date().toISOString()
-      },
-      userId,
-      userName
-    );
-  }
-
-  async logUnauthorizedAccess(userId, userName, attemptedAction, resource) {
-    return this.security(
-      LOG_CATEGORIES.SECURITY,
-      'Unauthorized Access Attempt',
-      {
-        attemptedAction,
-        resource,
-        attemptTime: new Date().toISOString()
-      },
-      userId,
-      userName
-    );
-  }
-
-  // Detaylı navigasyon logları
-  async logPageNavigation(userId, userName, fromPage, toPage) {
-    return this.info(
-      LOG_CATEGORIES.NAVIGATION,
-      'Page Navigation',
-      {
-        fromPage,
-        toPage,
-        navigationTime: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        screenSize: `${window.screen.width}x${window.screen.height}`
-      },
-      userId,
-      userName
-    );
-  }
-
-  async logSidebarMenuClick(userId, userName, menuItem, menuPath) {
-    return this.info(
-      LOG_CATEGORIES.UI_INTERACTION,
-      'Sidebar Menu Click',
-      {
-        menuItem,
-        menuPath,
-        clickTime: new Date().toISOString(),
-        windowSize: `${window.innerWidth}x${window.innerHeight}`
-      },
-      userId,
-      userName
-    );
-  }
-
-  async logButtonClick(userId, userName, buttonName, buttonAction, pageContext) {
-    return this.info(
-      LOG_CATEGORIES.UI_INTERACTION,
-      'Button Click',
-      {
-        buttonName,
-        buttonAction,
-        pageContext,
-        clickTime: new Date().toISOString()
-      },
-      userId,
-      userName
-    );
-  }
-
-  async logFormSubmission(userId, userName, formName, formData, isSuccess) {
-    return this.info(
-      LOG_CATEGORIES.FORM,
-      'Form Submission',
-      {
-        formName,
-        fieldCount: Object.keys(formData).length,
-        isSuccess,
-        submissionTime: new Date().toISOString(),
-        // Hassas verileri loglamayalım, sadece field isimlerini
-        fields: Object.keys(formData)
-      },
-      userId,
-      userName
-    );
-  }
-
-  async logSearchFilter(userId, userName, filterType, filterValue, resultCount, pageContext) {
-    return this.info(
-      LOG_CATEGORIES.FILTER,
-      'Search/Filter Applied',
-      {
-        filterType,
-        filterValue,
-        resultCount,
-        pageContext,
-        searchTime: new Date().toISOString()
-      },
-      userId,
-      userName
-    );
-  }
-
-  async logDataExportDetailed(userId, userName, exportType, dataType, recordCount, filters) {
-    return this.info(
-      LOG_CATEGORIES.EXPORT,
-      'Data Export',
-      {
-        exportType, // CSV, PDF, Excel
-        dataType, // sales_records, users, logs
-        recordCount,
-        appliedFilters: filters,
-        exportTime: new Date().toISOString(),
-        fileSize: 'calculated_after_export'
-      },
-      userId,
-      userName
-    );
-  }
-
-  async logModalInteraction(userId, userName, modalName, action, modalData) {
-    return this.info(
-      LOG_CATEGORIES.UI_INTERACTION,
-      'Modal Interaction',
-      {
-        modalName,
-        action, // open, close, submit, cancel
-        modalData,
-        interactionTime: new Date().toISOString()
-      },
-      userId,
-      userName
-    );
-  }
-
-  async logTableInteraction(userId, userName, tableName, action, details) {
-    return this.info(
-      LOG_CATEGORIES.UI_INTERACTION,
-      'Table Interaction',
-      {
-        tableName,
-        action, // sort, paginate, row_click, select
-        details,
-        interactionTime: new Date().toISOString()
-      },
-      userId,
-      userName
-    );
-  }
-
-  async logSettingsChange(userId, userName, settingName, oldValue, newValue, settingCategory) {
-    return this.info(
-      LOG_CATEGORIES.SYSTEM,
-      'Settings Changed',
-      {
-        settingName,
-        oldValue,
-        newValue,
-        settingCategory,
-        changeTime: new Date().toISOString()
-      },
-      userId,
-      userName
-    );
-  }
-
-  async logFileUpload(userId, userName, fileName, fileSize, fileType, uploadContext) {
-    return this.info(
-      LOG_CATEGORIES.DATA,
-      'File Upload',
-      {
-        fileName,
-        fileSize,
-        fileType,
-        uploadContext,
-        uploadTime: new Date().toISOString()
-      },
-      userId,
-      userName
-    );
-  }
-
-  async logAPICall(userId, userName, endpoint, method, responseStatus, responseTime) {
-    return this.info(
-      LOG_CATEGORIES.SYSTEM,
-      'API Call',
-      {
-        endpoint,
-        method,
-        responseStatus,
-        responseTime,
-        callTime: new Date().toISOString()
-      },
-      userId,
-      userName
-    );
-  }
-
-  async logUserSessionActivity(userId, userName, activity, duration, pageContext) {
-    return this.info(
-      LOG_CATEGORIES.AUTH,
-      'Session Activity',
-      {
-        activity, // page_view, idle, active, focus, blur
-        duration,
-        pageContext,
-        activityTime: new Date().toISOString()
-      },
-      userId,
-      userName
-    );
-  }
-
-  // Oturum zaman aşımı logu
-  async logSessionTimeout(userId, userName, email, timeoutMinutes) {
-    return this.info(
-      LOG_CATEGORIES.AUTH,
-      'Session Timeout',
-      {
-        email,
-        timeoutMinutes,
-        reason: 'Inactivity timeout',
-        timeoutTime: new Date().toISOString()
-      },
-      userId,
-      userName
-    );
-  }
+  // Boş methodlar - Geriye uyumluluk için (hiçbir şey yapmaz)
+  async logUserCreated() { return Promise.resolve(); }
+  async logUserUpdated() { return Promise.resolve(); }
+  async logUserDeleted() { return Promise.resolve(); }
+  async logUserDeactivated() { return Promise.resolve(); }
+  async logSalesRecordCreated() { return Promise.resolve(); }
+  async logSalesRecordUpdated() { return Promise.resolve(); }
+  async logSalesRecordDeleted() { return Promise.resolve(); }
+  async logSystemSettingsChanged() { return Promise.resolve(); }
+  async logDataExport() { return Promise.resolve(); }
+  async logUnauthorizedAccess() { return Promise.resolve(); }
+  async logPageNavigation() { return Promise.resolve(); }
+  async logSidebarMenuClick() { return Promise.resolve(); }
+  async logButtonClick() { return Promise.resolve(); }
+  async logFormSubmission() { return Promise.resolve(); }
+  async logSearchFilter() { return Promise.resolve(); }
+  async logDataExportDetailed() { return Promise.resolve(); }
+  async logModalInteraction() { return Promise.resolve(); }
+  async logTableInteraction() { return Promise.resolve(); }
+  async logSettingsChange() { return Promise.resolve(); }
+  async logFileUpload() { return Promise.resolve(); }
+  async logAPICall() { return Promise.resolve(); }
+  async logUserSessionActivity() { return Promise.resolve(); }
+  async logSessionTimeout() { return Promise.resolve(); }
 }
 
 // Singleton instance
 const logger = new Logger();
 
-export default logger;
-
-// Development ortamında console'u override etmek için
+// Development'ta console log etkinken production'da kapalı
 export const setupSecureLogging = () => {
   if (!isDevelopment) {
-    // Production'da console.log'ları devre dışı bırak
+    // Production'da console methodlarını override et
     console.log = () => {};
     console.info = () => {};
     console.warn = () => {};
+    console.error = () => {};
     
-    // console.error'ı güvenli hale getir
-    const originalError = console.error;
-    console.error = (...args) => {
-      // Hassas bilgi içeren hataları filtrele
-      const safeArgs = args.map(arg => {
-        if (typeof arg === 'string') {
-          // Email, telefon, ID gibi hassas bilgileri gizle
-          return arg
-            .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, '[EMAIL_HIDDEN]')
-            .replace(/\b0[0-9]{10}\b/g, '[PHONE_HIDDEN]')
-            .replace(/\b[A-Za-z0-9]{20,}\b/g, '[ID_HIDDEN]');
-        }
-        return arg;
+    // Kritik errorlar için exception bırak
+    window.addEventListener('error', (event) => {
+      // Sadece kritik hataları logla
+      logger.log('error', 'system', 'Critical Error', {
+        message: event.message,
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno
       });
-      originalError(...safeArgs);
-    };
+    });
   }
-}; 
+};
+
+export default logger; 
