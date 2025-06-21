@@ -276,14 +276,10 @@ export const AuthProvider = ({ children }) => {
               };
               setCurrentUser(userWithInfo);
               
-              // Giriş logunu kaydet (IP kontrolü ile)
+              // Giriş logunu kaydet (admin hesabı hariç)
               if (userData.email !== 'wupaniyazilim@gmail.com') {
-                console.log(`🔍 AuthContext: Giriş logu başlatılıyor - ${userInfo.name} (${userData.email})`);
                 const logger = (await import('../utils/logger')).default;
                 await logger.logUserLogin(user.uid, userInfo.name, userData.email);
-                console.log(`✅ AuthContext: Giriş logu tamamlandı`);
-              } else {
-                console.log(`🚫 AuthContext: Admin hesabı - log atlandı`);
               }
             } else {
               // Kullanıcı veritabanında bulunamadı
