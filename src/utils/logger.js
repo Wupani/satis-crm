@@ -160,35 +160,38 @@ class Logger {
       const currentIP = await this.getClientIP();
       console.log(`🌐 Mevcut IP: ${currentIP}`);
       
-      // Son 30 gün içindeki giriş loglarını kontrol et
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      
-      console.log(`📅 Son 30 gün kontrolü: ${thirtyDaysAgo.toLocaleDateString('tr-TR')} - ${new Date().toLocaleDateString('tr-TR')}`);
-      
       // Firebase'den son giriş loglarını çek
-      const { query, where, orderBy, limit, getDocs } = await import('firebase/firestore');
+      const { query, where, limit, getDocs } = await import('firebase/firestore');
       const logsRef = collection(db, 'system_logs');
       const recentLoginsQuery = query(
         logsRef,
         where('userId', '==', userId),
         where('action', '==', 'User Login'),
-        where('timestamp', '>=', thirtyDaysAgo),
-        orderBy('timestamp', 'desc'),
-        limit(10)
+        limit(20)
       );
       
-      console.log(`🔎 Firebase'den son giriş logları çekiliyor...`);
+      console.log(`🔎 Firebase'den son giriş logları çekiliyor (basitleştirilmiş query)...`);
       const recentLogins = await getDocs(recentLoginsQuery);
       const previousIPs = new Set();
       
       console.log(`📊 Bulunan giriş logu sayısı: ${recentLogins.size}`);
       
+      // Son 30 gün filtresi client-side yapılacak
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
       recentLogins.forEach(doc => {
         const data = doc.data();
-        console.log(`📋 Log: ${data.timestamp?.toDate?.()?.toLocaleString('tr-TR')} - IP: ${data.ip}`);
-        if (data.ip && data.ip !== 'unknown') {
-          previousIPs.add(data.ip);
+        const logDate = data.timestamp?.toDate ? data.timestamp.toDate() : new Date(data.timestamp);
+        
+        // 30 gün kontrolü
+        if (logDate >= thirtyDaysAgo) {
+          console.log(`📋 Log: ${logDate.toLocaleString('tr-TR')} - IP: ${data.ip}`);
+          if (data.ip && data.ip !== 'unknown') {
+            previousIPs.add(data.ip);
+          }
+        } else {
+          console.log(`⏰ Eski log atlandı: ${logDate.toLocaleString('tr-TR')}`);
         }
       });
       
