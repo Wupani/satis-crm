@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, getDocs } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../auth/firebaseConfig';
 import { useAuth } from '../context/AuthContext';
 import { 
@@ -71,18 +71,47 @@ const PersonnelDevelopment = () => {
       // Personel istatistikleri hesapla
       const personnelStats = {};
       records.forEach(record => {
-        const personnel = record.personel || record.createdBy || 'Personel Atanmamış';
-        if (!personnelStats[personnel]) {
-          personnelStats[personnel] = {
-            name: personnel,
+        // Önce createdBy'a bak, yoksa personel'e bak (düzeltilmiş veriler için)
+        let personnelKey = null;
+        let personnelName = null;
+        
+        // createdBy UID'si varsa, kullanıcı verilerinden gerçek ismi bul
+        if (record.createdBy && usersData[record.createdBy]) {
+          personnelKey = record.createdBy;
+          personnelName = usersData[record.createdBy].name || record.createdBy;
+        } 
+        // createdBy yoksa veya kullanıcı bulunamadıysa, personel field'ını kullan
+        else if (record.personel) {
+          personnelKey = record.personel;
+          personnelName = record.personel;
+          
+          // Personel ismini UID ile eşleştirmeye çalış
+          const matchingUser = Object.values(usersData).find(user => 
+            user.name && user.name.toLowerCase() === record.personel.toLowerCase()
+          );
+          if (matchingUser) {
+            personnelKey = matchingUser.uid;
+            personnelName = matchingUser.name;
+          }
+        }
+        // Her ikisi de yoksa
+        else {
+          personnelKey = 'Personel Atanmamış';
+          personnelName = 'Personel Atanmamış';
+        }
+        
+        if (!personnelStats[personnelKey]) {
+          personnelStats[personnelKey] = {
+            name: personnelName,
+            uid: personnelKey,
             totalRecords: 0,
             successfulSales: 0,
             conversionRate: 0
           };
         }
-        personnelStats[personnel].totalRecords++;
+        personnelStats[personnelKey].totalRecords++;
         if (record.detay === 'Satış Sağlandı' || record.detay === 'Satış sağlandı') {
-          personnelStats[personnel].successfulSales++;
+          personnelStats[personnelKey].successfulSales++;
         }
       });
 
@@ -104,10 +133,22 @@ const PersonnelDevelopment = () => {
           }
         }
 
-        // Personelin kayıtlarını analiz et
-        const personnelRecords = records.filter(record => 
-          record.personel === personnelId || record.createdBy === personnelId
-        );
+        // Personelin kayıtlarını analiz et (güncellenmiş mantık)
+        const personnelRecords = records.filter(record => {
+          // UID ile eşleştir
+          if (record.createdBy === personnelId) return true;
+          
+          // İsim ile eşleştir
+          if (record.personel === personnelId) return true;
+          
+          // Kullanıcı adı ile eşleştir (esnek)
+          const userInfo = usersData[personnelId];
+          if (userInfo && userInfo.name && record.personel) {
+            return userInfo.name.toLowerCase() === record.personel.toLowerCase();
+          }
+          
+          return false;
+        });
 
         // Durum ve detay analizi
         const statusAnalysis = {};

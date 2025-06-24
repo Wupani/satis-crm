@@ -26,7 +26,8 @@ import {
   RefreshCw,
   Loader2,
   Phone,
-  UserPlus
+  UserPlus,
+  Trophy
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -50,6 +51,12 @@ const Sidebar = () => {
               icon: LayoutDashboard,
               label: 'Anasayfa',
               description: 'Genel bakış ve istatistikler'
+            },
+            {
+              path: '/achievements',
+              icon: Trophy,
+              label: 'Başarımlar',
+              description: 'Başarımlarınızı görüntüleyin'
             }
           ]
         },
@@ -184,6 +191,12 @@ const Sidebar = () => {
               icon: LayoutDashboard,
               label: 'Anasayfa',
               description: 'Genel bakış ve istatistikler'
+            },
+            {
+              path: '/achievements',
+              icon: Trophy,
+              label: 'Başarımlar',
+              description: 'Başarımlarınızı görüntüleyin'
             }
           ]
         },
@@ -260,6 +273,12 @@ const Sidebar = () => {
               icon: LayoutDashboard,
               label: 'Anasayfa',
               description: 'Genel bakış ve istatistikler'
+            },
+            {
+              path: '/achievements',
+              icon: Trophy,
+              label: 'Başarımlar',
+              description: 'Başarımlarınızı görüntüleyin'
             }
           ]
         },
@@ -532,8 +551,8 @@ const Sidebar = () => {
               </div>
             ) : (
               <div className="text-center">
-                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Satış Takip CRM v2.0</p>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">© 2024 Tüm hakları saklıdır</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Satış Takip CRM v1.4.0</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">© 2025 Tüm hakları saklıdır</p>
               </div>
             )}
           </div>

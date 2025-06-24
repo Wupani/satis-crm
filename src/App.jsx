@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DarkModeProvider } from './context/DarkModeContext';
+import { AchievementProvider } from './context/AchievementContext';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
@@ -24,6 +25,8 @@ import DataUpdate from './components/DataUpdate';
 import UserSwitcher from './pages/UserSwitcher';
 import RoleGuard from './components/RoleGuard';
 import ChatSystem from './components/ChatSystem';
+import Achievements from './pages/Achievements';
+import AchievementNotification from './components/AchievementNotification';
 import './App.css';
 
 // Protected Route Component
@@ -47,6 +50,8 @@ function MainLayout({ children }) {
       </div>
       {/* Chat System - Tüm sayfalarda görünür */}
       <ChatSystem />
+      {/* Achievement Notification - Global bildirimler */}
+      <AchievementNotification />
     </div>
   );
 }
@@ -410,6 +415,17 @@ function AppContent() {
           }
         />
         
+        <Route
+          path="/achievements"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <Achievements />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        
         {/* Catch all route */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
@@ -421,7 +437,9 @@ function App() {
   return (
     <DarkModeProvider>
       <AuthProvider>
-        <AppContent />
+        <AchievementProvider>
+          <AppContent />
+        </AchievementProvider>
       </AuthProvider>
     </DarkModeProvider>
   );

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../auth/firebaseConfig';
+import AchievementWidget from '../components/AchievementWidget';
 import { 
   CheckCircle,
   BarChart3,
@@ -393,7 +394,7 @@ const Dashboard = () => {
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <div className="card-modern p-6 hover:scale-105 transition-transform duration-300">
             <div className="flex items-center justify-between mb-3">
               <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
@@ -432,6 +433,11 @@ const Dashboard = () => {
                 {stats.successfulSales.toLocaleString('tr-TR')}
               </p>
             </div>
+          </div>
+
+          {/* Achievement Widget */}
+          <div className="hover:scale-105 transition-transform duration-300">
+            <AchievementWidget />
           </div>
         </div>
 

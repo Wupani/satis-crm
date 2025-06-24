@@ -24,6 +24,9 @@ const DataUpdate = () => {
   const [updateResults, setUpdateResults] = useState(null);
   const [analysisResults, setAnalysisResults] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isFixingUIDs, setIsFixingUIDs] = useState(false);
+  const [isFixingAsli, setIsFixingAsli] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
   
   // Modal state'leri
   const [showDeveloperModal, setShowDeveloperModal] = useState(false);
@@ -40,6 +43,7 @@ const DataUpdate = () => {
       return;
     }
 
+    setIsVerifying(true);
     try {
       await signInWithEmailAndPassword(auth, 'wupaniyazilim@gmail.com', developerPassword);
       
@@ -47,6 +51,7 @@ const DataUpdate = () => {
       setShowDeveloperModal(false);
       setDeveloperPassword('');
       setDeveloperError('');
+      setIsVerifying(false);
       
       // Bekleyen işlemi gerçekleştir
       if (pendingAction === 'analyze') {
@@ -64,11 +69,15 @@ const DataUpdate = () => {
     } catch (error) {
       console.error('Geliştirici doğrulama hatası:', error);
       setDeveloperError('❌ Geçersiz geliştirici şifresi!');
+      setIsVerifying(false);
     }
   };
 
   // Modal kapatma
   const closeDeveloperModal = () => {
+    // Loading durumundayken modal kapatma
+    if (isVerifying) return;
+    
     setShowDeveloperModal(false);
     setDeveloperPassword('');
     setDeveloperError('');
@@ -98,6 +107,7 @@ const DataUpdate = () => {
 
   // Kullanıcıların uid field'ını düzelt
   const fixUserUIDs = async () => {
+    setIsFixingUIDs(true);
     try {
       const usersSnapshot = await getDocs(collection(db, 'users'));
       let fixedCount = 0;
@@ -118,16 +128,23 @@ const DataUpdate = () => {
         }
       }
       
-      alert(`✅ ${fixedCount} kullanicinin UID i duzeltildi!`);
+      if (fixedCount > 0) {
+        alert(`✅ Başarılı! ${fixedCount} kullanıcının UID'si düzeltildi.`);
+      } else {
+        alert('ℹ️ Düzeltilecek UID bulunamadı. Tüm kullanıcıların UID\'leri zaten doğru.');
+      }
       
     } catch (error) {
       console.error('❌ UID duzeltme hatasi:', error);
       alert('❌ UID duzeltme hatasi: ' + error.message);
+    } finally {
+      setIsFixingUIDs(false);
     }
   };
 
   // Aslı Kılıç kayıtlarını manuel düzelt
   const fixAsliRecords = async () => {
+    setIsFixingAsli(true);
     try {
       // Aslı Kılıç kullanıcısını bul
       const usersSnapshot = await getDocs(collection(db, 'users'));
@@ -165,11 +182,17 @@ const DataUpdate = () => {
         }
       }
       
-      alert(`✅ ${fixedCount} Aslı Kılıç kaydı düzeltildi!`);
+      if (fixedCount > 0) {
+        alert(`✅ Başarılı! ${fixedCount} adet Aslı Kılıç kaydı düzeltildi ve doğru kullanıcıya atandı.`);
+      } else {
+        alert('ℹ️ Düzeltilecek Aslı Kılıç kaydı bulunamadı. Tüm kayıtlar zaten doğru kullanıcıya atanmış.');
+      }
       
     } catch (error) {
       console.error('❌ Asli kayitlari duzeltme hatasi:', error);
       alert('❌ Aslı kayıtları düzeltme hatası: ' + error.message);
+    } finally {
+      setIsFixingAsli(false);
     }
   };
 
@@ -529,10 +552,17 @@ const DataUpdate = () => {
                   <p className="text-sm text-gray-500 mb-2">Eğer kullanıcı UID problemi varsa:</p>
                   <button
                     onClick={handleProtectedFixUIDs}
-                    className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2 mx-auto text-sm"
+                    disabled={isFixingUIDs}
+                    className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2 mx-auto text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Shield className="w-4 h-4" />
-                    <span>Kullanıcı UID'lerini Düzelt (Geliştirici)</span>
+                    {isFixingUIDs ? (
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Shield className="w-4 h-4" />
+                    )}
+                    <span>
+                      {isFixingUIDs ? 'Kullanıcı UID\'leri Düzeltiliyor...' : 'Kullanıcı UID\'lerini Düzelt (Geliştirici)'}
+                    </span>
                   </button>
                 </div>
                 
@@ -540,10 +570,17 @@ const DataUpdate = () => {
                   <p className="text-sm text-gray-500 mb-2">Aslı Kılıç kayıtları düzeltilmiyorsa:</p>
                   <button
                     onClick={handleProtectedFixAsli}
-                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2 mx-auto text-sm"
+                    disabled={isFixingAsli}
+                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2 mx-auto text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Shield className="w-4 h-4" />
-                    <span>Aslı Kılıç Kayıtlarını Manuel Düzelt (Geliştirici)</span>
+                    {isFixingAsli ? (
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Shield className="w-4 h-4" />
+                    )}
+                    <span>
+                      {isFixingAsli ? 'Aslı Kılıç Kayıtları Düzeltiliyor...' : 'Aslı Kılıç Kayıtlarını Manuel Düzelt (Geliştirici)'}
+                    </span>
                   </button>
                 </div>
               </div>
@@ -729,16 +766,24 @@ const DataUpdate = () => {
                 <div className="flex space-x-3">
                   <button
                     onClick={closeDeveloperModal}
-                    className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                    disabled={isVerifying}
+                    className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     İptal
                   </button>
                   <button
                     onClick={verifyDeveloper}
-                    disabled={!developerPassword}
-                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    disabled={!developerPassword || isVerifying}
+                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center space-x-2"
                   >
-                    Doğrula
+                    {isVerifying ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        <span>Doğrulanıyor...</span>
+                      </>
+                    ) : (
+                      <span>Doğrula</span>
+                    )}
                   </button>
                 </div>
               </div>
